@@ -35,7 +35,10 @@ data class OnBid(
     var buildingarea: BigDecimal? = null, //건물면적
 
     @OneToMany(mappedBy = "onBid", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var onBidDays: MutableList<OnBidDays> = mutableListOf()
+    var onBidDays: MutableList<OnBidDays> = mutableListOf(),
+
+    @OneToMany(mappedBy = "onBidFiles", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var onBidFiles: MutableList<OnBidFile>? = mutableListOf()
 ) {
     // 생성자 추가
 //    constructor( contents: String?,contphone: String?, regdate: LocalDateTime?,items: String?)
@@ -47,6 +50,19 @@ data class OnBid(
 
     // 모든 필드를 초기화하는 보조 생성자
     constructor(addr1: String?, addr2: String? ,bankruptcyName: String?, bankruptcyphone: String?, regdate: LocalDateTime?, items: String?) : this(null,addr1,addr2, bankruptcyName, bankruptcyphone, regdate, items)
+
+    /**
+     * 파일첨부
+     */
+    fun addOnBidFiles(onBidFile: OnBidFile) {
+        onBidFiles?.add(onBidFile)
+        onBidFile.onBidFiles = this
+    }
+
+    fun removeOnBidDay(onBidFile: OnBidFile) {
+        onBidFiles?.remove(onBidFile)
+        onBidFile.onBidFiles = null
+    }
 
     // Helper method to manage the bid days relationship
     fun addOnBidDay(onBidDay: OnBidDays) {

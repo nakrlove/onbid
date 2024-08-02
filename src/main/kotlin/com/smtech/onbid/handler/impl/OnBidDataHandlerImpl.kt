@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 @Transactional
 class OnBidDataHandlerImpl(@Autowired val onBidDAO: OnBidDAO):OnBidDataHandler {
+
     override fun saveOnBidEntify(onBid: OnBid): OnBid {
 //        TODO("Not yet implemented")
         onBidDAO.saveOnBid(onBid)

@@ -10,7 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class OnBidDAOImpl(@Autowired val onbidDRepository: OnBidRepository, @Autowired val onBidFileRepository: OnBidFileRepository):OnBidDAO {
+class OnBidDAOImpl(@Autowired val onbidDRepository: OnBidRepository
+                 , @Autowired val onBidFileRepository: OnBidFileRepository):OnBidDAO {
     val  LOGGER: Logger = LoggerFactory.getLogger(this.javaClass)
     override fun saveOnBid(onBid: OnBid): OnBid {
 //        return OnBid();

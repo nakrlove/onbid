@@ -1,8 +1,10 @@
 package com.smtech.onbid.controller
 
 import com.smtech.onbid.data.dto.PostDTO
-import com.smtech.onbid.entity.PostWrapper
+import com.smtech.onbid.data.dto.PostWrapper
 import com.smtech.onbid.service.PostService
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -32,17 +34,24 @@ class PostController(@Autowired val postService: PostService) {
 //        val fcount = postService.findByCount(addr1,addr2,addr3)
 //        return ResponseEntity.status(HttpStatus.OK).body(fcount)
 //    }
-
+    val LOGGER: Lazy<Logger> = lazy { LoggerFactory.getLogger(PostController::class.java) }
 
 
     @PostMapping("/find")
-    fun findPosts( @RequestBody param: PostDTO ): ResponseEntity<out Any> {
+    fun findPosts( @RequestBody param: PostDTO ): ResponseEntity<out PostWrapper> {
+        LOGGER.value.trace(" findPosts trace ####################")
+        LOGGER.value.debug(" findPosts debug ####################")
+        LOGGER.value.info(" findPosts info ####################")
+        LOGGER.value.error(" findPosts error ####################")
         val (addr1,addr2,addr3,totalPage,reload) = param
         var fcount: Long = 0
 
         reload?.let {
             if(it == 0) {
                 fcount = addr1?.let { postService.findByCount(it) } ?: 0
+
+                LOGGER.value.trace(" findPosts count #${fcount}")
+
             }
         }
         val postList = addr1?.let { postService.findPosts(it,totalPage!!) }

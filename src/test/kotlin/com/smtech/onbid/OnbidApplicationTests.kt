@@ -30,7 +30,8 @@ class OnbidApplicationTests {
 	fun `test saving OnBid entity`() {
 		// Given
 		val onBid = OnBid(
-			contents = "Some CONTENTS",
+			addr1 = "Some CONTENTS",
+			addr2 = "test 1",
 			regdate = LocalDateTime.now()
 		)
 
@@ -50,7 +51,7 @@ class OnbidApplicationTests {
 //		val savedOnBidDays = onBidDaysRepository.save(onBidDays)
 		// Then
 //		assertNotNull(savedOnBid.idx) // Ensure that ID is generated
-		assertEquals(onBid.contents, savedOnBid.contents)
+		assertEquals(onBid.addr1, savedOnBid.addr1)
 		assertEquals(onBid.regdate, savedOnBid.regdate)
 //		assertEquals(onBid.zcode, savedOnBid.zcode)
 	}

@@ -17,6 +17,8 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler): OnBidServ
     @Transactional
     override fun saveOnBid(onBidDTO: OnBidDTO, fileBytes: MultipartFile?, additionalFilesBytes: List<MultipartFile>?): OnBid {
         //onBid.regdate = LocalDateTime.now() // Set the current date/time
+
+        println(" saveOnBid =============== 1")
         val onbid  = OnBid( addr1 = onBidDTO.addr1
                           , addr2 = onBidDTO.addr2
                           , bankruptcyName = onBidDTO.bankruptcyName
@@ -46,13 +48,14 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler): OnBidServ
             onbid.onBidFiles?.add(onBidFile)
         }
 //        onBidRepository.save(onBid)
-        return onBidHandler.saveOnBidEntify(onbid)
+        return onBidHandler.saveOnBidEntity(onbid)
     }
 
     override fun saveOnBid(onBidDTO: OnBidDTO, file: File?, additionalFiles: List<File>?): OnBid {
+        println(" saveOnBid =============== 2")
         //onBid.regdate = LocalDateTime.now() // Set the current date/time
         val onbid  = OnBid(addr1 = onBidDTO.addr1,addr2 = onBidDTO.addr2, bankruptcyName = onBidDTO.bankruptcyName, bankruptcyphone = onBidDTO.bankruptcyPhone)
-        return onBidHandler.saveOnBidEntify(onbid)
+        return onBidHandler.saveOnBidEntity(onbid)
     }
 }
 

@@ -3,7 +3,7 @@ package com.smtech.onbid.controller
 import com.smtech.onbid.data.dto.OnBidDTO
 import com.smtech.onbid.entity.OnBid
 import com.smtech.onbid.service.OnBidService
-import com.smtech.onbid.utils.Utils
+import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
@@ -66,9 +66,9 @@ class OnBidController( @Autowired val onbid: OnBidService) {
      * BLOB 컬럼에 파일저장
      */
     @PostMapping("/onbidL", consumes = ["multipart/form-data"])
-    fun onBidList( @RequestPart onbidDTO: OnBidDTO
-                 , @RequestPart("file") file: MultipartFile
-                 , @RequestPart("additionalFiles") additionalFiles: List<MultipartFile>): ResponseEntity<out Any>{
+    fun onBidList( @Valid @RequestPart onbidDTO: OnBidDTO
+                 , @RequestPart("file") file: MultipartFile?
+                 , @RequestPart("additionalFiles") additionalFiles: List<MultipartFile>?): ResponseEntity<out Any>{
         println("================onbidL=============")
 
         onbid.saveOnBid(onbidDTO, file, additionalFiles)

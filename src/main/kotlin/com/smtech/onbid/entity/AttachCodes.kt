@@ -17,10 +17,10 @@ data class AttachCodes(
     var code: String? = null,
 
     @Column(name = "CODE_NAME")
-    val codename: String ,
+    var codename: String? = null ,
 
     @Column(name = "SUB_CODE")
-    val subcode: String? = null,
+    var subcode: String? = null,
 ) {
 
     @PrePersist
@@ -31,5 +31,12 @@ data class AttachCodes(
         // 코드 생성 로직을 서비스 클래스에서 처리합니다.
         // 예를 들어, AttachCodeService에서 처리할 수 있습니다.
         return "000" // 디폴트 코드로 설정합니다.
+    }
+
+    @PostLoad
+    fun setDefaultSubcode() {
+        if (subcode.isNullOrEmpty()) {
+            subcode = "000"
+        }
     }
 }

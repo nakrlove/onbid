@@ -8,17 +8,31 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class CodeServiceImpl @Autowired constructor( val codeDataHandler: CodeDataHandler): CodeService {
-    override fun generateNextCode(): String {
-        return codeDataHandler.generateNextCode()
-    }
+//    override fun generateNextCode(): String {
+//        return codeDataHandler.generateNextCode()
+//    }
 
 
     override fun saveCode(attach: AttachCodeDTO): AttachCodes {
+
         val data = AttachCodes(codename = attach.codename )
         codeDataHandler.saveCodeEntity(data)
+        return data
+    }
+
+    override fun updateCode(attach: AttachCodeDTO): AttachCodes? {
+        // 1. ID로 엔티티 조회
+        val data = AttachCodes(idx = attach.idx, codename = attach.codename )
+        return codeDataHandler.updateCodeEntity(data)
+    }
+
+    override fun deleteCode(attach: AttachCodeDTO): AttachCodes {
+        val data = AttachCodes(idx = attach.idx, codename = attach.codename )
+        codeDataHandler.deleteCodeEntity(data)
         return data
     }
 
@@ -30,6 +44,7 @@ class CodeServiceImpl @Autowired constructor( val codeDataHandler: CodeDataHandl
 
     override fun findListsEntity(attach: AttachCodeDTO, page: PageRequest): Page<AttachCodes> {
         val data = AttachCodes(codename = attach.codename )
+        println("(@) ====== findListsEntity ====== (@)")
         return codeDataHandler.findListsEntity(data,page)
     }
 }

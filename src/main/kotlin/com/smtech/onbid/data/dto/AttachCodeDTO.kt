@@ -14,6 +14,7 @@ data class AttachCodeDTO(
 
     var idx: Long = 0,
     val codename: String? = null,
+    val subcode: String? = null,
     @field:NotNull(message = "Page number is required") val page: Int = 0,
     @field:NotNull(message = "Page size is required") val size: Int = 10
 )

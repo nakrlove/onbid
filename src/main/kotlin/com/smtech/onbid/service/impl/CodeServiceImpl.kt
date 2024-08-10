@@ -1,6 +1,7 @@
 package com.smtech.onbid.service.impl
 
 import com.smtech.onbid.data.dto.AttachCodeDTO
+import com.smtech.onbid.data.repository.AttachCodeRepository
 import com.smtech.onbid.entity.AttachCodes
 import com.smtech.onbid.handler.CodeDataHandler
 import com.smtech.onbid.service.CodeService
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class CodeServiceImpl @Autowired constructor( val codeDataHandler: CodeDataHandler): CodeService {
+class CodeServiceImpl @Autowired constructor( val codeDataHandler: CodeDataHandler, @Autowired val attachCodeRepository: AttachCodeRepository): CodeService {
 //    override fun generateNextCode(): String {
 //        return codeDataHandler.generateNextCode()
 //    }
@@ -19,7 +20,7 @@ class CodeServiceImpl @Autowired constructor( val codeDataHandler: CodeDataHandl
 
     override fun saveCode(attach: AttachCodeDTO): AttachCodes {
 
-        val data = AttachCodes(codename = attach.codename )
+        val data = AttachCodes(codename = attach.codename, subcode = attach.subcode)
         codeDataHandler.saveCodeEntity(data)
         return data
     }
@@ -40,6 +41,13 @@ class CodeServiceImpl @Autowired constructor( val codeDataHandler: CodeDataHandl
         val data = AttachCodes(codename = attach.codename )
         codeDataHandler.findCodeEntity(data)
         return data
+    }
+
+    /**
+     * 등록된 마스트키 조회
+     */
+    override fun findMastCode(subcode: String): List<AttachCodes> {
+        return attachCodeRepository.findBySubcode(subcode)
     }
 
     override fun findListsEntity(attach: AttachCodeDTO, page: PageRequest): Page<AttachCodes> {

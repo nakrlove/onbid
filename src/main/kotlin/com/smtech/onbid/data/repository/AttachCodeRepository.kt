@@ -12,6 +12,9 @@ interface AttachCodeRepository: JpaRepository<AttachCodes, Long> {
     /** 코드명 검색 */
     fun findByCodenameContaining(codename: String, pageable: Pageable): Page<AttachCodes>
 
+    /** SUB_CODE로 조회*/
+    fun findBySubcode(subcode: String): List<AttachCodes>
+
     /** 코드명 검색 */
     override fun findAll(pageable: Pageable): Page<AttachCodes>
 

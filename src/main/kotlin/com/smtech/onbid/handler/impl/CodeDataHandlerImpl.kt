@@ -1,8 +1,7 @@
 package com.smtech.onbid.handler.impl
 
-import com.smtech.onbid.data.dao.AttachCodeDAO
-import com.smtech.onbid.data.dto.AttachCodeDTO
-import com.smtech.onbid.entity.AttachCodes
+import com.smtech.onbid.data.dao.CodeDAO
+import com.smtech.onbid.entity.Codes
 import com.smtech.onbid.handler.CodeDataHandler
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,30 +12,30 @@ import java.util.*
 
 @Service
 @Transactional
-class CodeDataHandlerImpl(@Autowired val attachDao: AttachCodeDAO): CodeDataHandler {
+class CodeDataHandlerImpl(@Autowired val attachDao: CodeDAO): CodeDataHandler {
 //    override fun generateNextCode(): String {
 ////        TODO("Not yet implemented")
 //        return
 //    }
 
-    override fun saveCodeEntity(attach: AttachCodes): Optional<AttachCodes> {
+    override fun saveCodeEntity(attach: Codes): Optional<Codes> {
         return  attachDao.saveCode(attach)
     }
 
-    override fun updateCodeEntity(attach: AttachCodes): AttachCodes? {
+    override fun updateCodeEntity(attach: Codes): Codes? {
         return  attachDao.updateCode(attach)
     }
 
 
-    override fun deleteCodeEntity(attach: AttachCodes) {
+    override fun deleteCodeEntity(attach: Codes) {
         attachDao.deleteCode(attach)
     }
 
-    override fun findCodeEntity(attach: AttachCodes): Optional<AttachCodes> {
+    override fun findCodeEntity(attach: Codes): Optional<Codes> {
         return  attachDao.findCode(attach)
     }
 
-    override fun findListsEntity(attach: AttachCodes, page: PageRequest): Page<AttachCodes> {
+    override fun findListsEntity(attach: Codes, page: PageRequest): Page<Codes> {
         println("(||) === findListsEntity === (||)")
         return attachDao.findListsEntity(attach,page)
     }

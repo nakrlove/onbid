@@ -1,13 +1,10 @@
 package com.smtech.onbid.entity
 
-import com.smtech.onbid.service.CodeService
-import com.smtech.onbid.service.impl.CodeServiceImpl
 import jakarta.persistence.*
-import org.springframework.beans.factory.annotation.Autowired
 
 @Entity
-@Table(name = "onbidcodes")
-data class AttachCodes(
+@Table(name = "code_tb")
+data class Codes(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IDX")
@@ -16,11 +13,11 @@ data class AttachCodes(
     @Column(name = "CODE")
     var code: String? = null,
 
-    @Column(name = "CODE_NAME")
-    var codename: String? = null ,
+    @Column(name = "NAME")
+    var name: String? = null ,
 
-    @Column(name = "SUB_CODE")
-    var subcode: String? = null,
+    @Column(name = "SCODE")
+    var scode: String? = null,
 ) {
 
     @PrePersist
@@ -34,9 +31,9 @@ data class AttachCodes(
     }
 
     @PostLoad
-    fun setDefaultSubcode() {
-        if (subcode.isNullOrEmpty()) {
-            subcode = "000"
+    fun setDefaultScode() {
+        if (scode.isNullOrEmpty()) {
+            scode = "000"
         }
     }
 }

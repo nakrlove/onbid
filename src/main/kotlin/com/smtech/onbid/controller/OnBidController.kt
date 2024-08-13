@@ -67,11 +67,22 @@ class OnBidController( @Autowired val onbid: OnBidService) {
      */
     @PostMapping("/onbidL", consumes = ["multipart/form-data"])
     fun onBidList( @Valid @RequestPart onbidDTO: OnBidDTO
-                 , @RequestPart("file") file: MultipartFile?
-                 , @RequestPart("additionalFiles") additionalFiles: List<MultipartFile>?): ResponseEntity<out Any>{
+                 , @RequestParam("additionalFiles") additionalFiles: List<MultipartFile>?
+                 , @RequestParam("additionalFileOptions") options: List<String>?
+    ): ResponseEntity<out Any>{
         println("================onbidL=============")
 
-        onbid.saveOnBid(onbidDTO, file, additionalFiles)
+        // additionalFiles와 options를 함께 처리하는 로직
+        if (additionalFiles != null && options != null && additionalFiles.size == options.size) {
+            additionalFiles.forEachIndexed { index, file ->
+                val option = options[index]
+                // 파일과 옵션을 함께 저장하는 로직
+                println("File: ${file.originalFilename}, Option: $option")
+            }
+        }
+
+        onbid.saveOnBid(onbidDTO, null, additionalFiles)
+        println("=====additionalFiles count[${additionalFiles?.size}]")
         return ResponseEntity.status(HttpStatus.OK).body(onbidDTO)
     }
 

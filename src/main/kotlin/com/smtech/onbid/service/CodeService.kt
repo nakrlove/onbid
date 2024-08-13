@@ -1,16 +1,17 @@
 package com.smtech.onbid.service
 
-import com.smtech.onbid.data.dto.AttachCodeDTO
-import com.smtech.onbid.entity.AttachCodes
-import org.springframework.data.domain.Page
+import com.smtech.onbid.data.dto.CodeDTO
+import com.smtech.onbid.entity.Codes
+import com.smtech.onbid.entity.wapper.CodeWrapper
 import org.springframework.data.domain.PageRequest
 
 interface CodeService {
 //    fun generateNextCode(): String
-    fun saveCode(attach: AttachCodeDTO): AttachCodes
-    fun updateCode(attach: AttachCodeDTO): AttachCodes?
-    fun deleteCode(attach: AttachCodeDTO): AttachCodes
-    fun findCode(attach: AttachCodeDTO): AttachCodes
-    fun findMastCode(subcode: String): List<AttachCodes>
-    fun findListsEntity(attach: AttachCodeDTO, page: PageRequest): Page<AttachCodes>
+    fun saveCode(attach: CodeDTO): Codes
+    fun updateCode(attach: CodeDTO): Codes?
+    fun deleteCode(attach: CodeDTO): Codes
+    fun findCode(attach: CodeDTO): Codes
+    fun findCodeQuery(): List<Codes>
+    fun findMastCode(subcode: String): List<Codes>
+    fun findListsEntity(attach: CodeDTO, page: PageRequest): CodeWrapper
 }

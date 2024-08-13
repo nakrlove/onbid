@@ -1,9 +1,8 @@
 package com.smtech.onbid.data.dao.impl
 
-import com.smtech.onbid.data.dao.AttachCodeDAO
-import com.smtech.onbid.data.dto.AttachCodeDTO
-import com.smtech.onbid.data.repository.AttachCodeRepository
-import com.smtech.onbid.entity.AttachCodes
+import com.smtech.onbid.data.dao.CodeDAO
+import com.smtech.onbid.data.repository.CodeRepository
+import com.smtech.onbid.entity.Codes
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,11 +13,9 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
-class AttachCodeDAOImpl(@Autowired val attachCodeRepository: AttachCodeRepository): AttachCodeDAO {
+class CodeDAOImpl(@Autowired val attachCodeRepository: CodeRepository): CodeDAO {
 
     val LOGGER: Lazy<Logger> = lazy { LoggerFactory.getLogger(this.javaClass) }
-
-
     /** 3자리 코드생성 */
     override fun generateNextCode(): String {
         val maxCode = attachCodeRepository.findMaxCode()
@@ -27,14 +24,14 @@ class AttachCodeDAOImpl(@Autowired val attachCodeRepository: AttachCodeRepositor
     }
 
     @Transactional
-    override fun saveCode(attach: AttachCodes): Optional<AttachCodes> {
+    override fun saveCode(attach: Codes): Optional<Codes> {
 
         LOGGER.value.debug(" =========== saveCode ============")
         attach.code = generateNextCode() //code값 max값
 
         //null일경우 000r값 추가
-        if (attach.subcode.isNullOrEmpty()) {
-            attach.subcode = "000"
+        if (attach.scode.isNullOrEmpty()) {
+            attach.scode = "000"
         }
         val saveResult = attachCodeRepository.save(attach)
         return  attachCodeRepository.findById(saveResult.idx!!)
@@ -43,13 +40,13 @@ class AttachCodeDAOImpl(@Autowired val attachCodeRepository: AttachCodeRepositor
     /**
      * 수정
      */
-    override fun updateCode(attach: AttachCodes): AttachCodes? {
-//        val data = AttachCodes(idx = attach.idx, codename = attach.codename )
+    override fun updateCode(attach: Codes): Codes? {
         val optionalEntity = attachCodeRepository.findById(attach.idx!!)
         return if(optionalEntity.isPresent) {
             // 2. 엔티티 존재 시, 수정 작업 수행
             val attachCode = optionalEntity.get()
-            attachCode.codename = attach.codename
+            attachCode.name = attach.name
+            attachCode.scode = attach.scode
             // 3. save 메서드로 엔티티 저장 (업데이트)
             attachCodeRepository.save(attachCode)
         } else {
@@ -59,11 +56,15 @@ class AttachCodeDAOImpl(@Autowired val attachCodeRepository: AttachCodeRepositor
     }
 
 
-    override fun deleteCode(attach: AttachCodes) {
+    override fun deleteCode(attach: Codes) {
         attach.idx?.let { attachCodeRepository.deleteById(it) }
     }
 
-    override fun findCode(attach: AttachCodes): Optional<AttachCodes> {
+    override fun findCodeQuery(): List<Codes> {
+        return attachCodeRepository.findCodeQuery()
+    }
+
+    override fun findCode(attach: Codes): Optional<Codes> {
         LOGGER.value.debug(" =========== findCode ============")
         return   attachCodeRepository.findById(attach.idx!!);
     }
@@ -71,15 +72,15 @@ class AttachCodeDAOImpl(@Autowired val attachCodeRepository: AttachCodeRepositor
     /**
      * 목록조회
      */
-    override fun findListsEntity(attach: AttachCodes, page: PageRequest): Page<AttachCodes> {
+    override fun findListsEntity(attach: Codes, page: PageRequest): Page<Codes> {
 
         LOGGER.value.debug(" =========== findListsEntity ============")
-        return if (attach.codename.isNullOrBlank()) {
-            LOGGER.value.debug(" =========== (1) findListsEntity ============")
+        return if (attach.name.isNullOrBlank()) {
+            LOGGER.value.debug(" =========== (1) findListsEntity == pageNumber:${page.pageNumber},pageSize:${page.pageSize}")
             attachCodeRepository.findAll(page)
         } else {
             LOGGER.value.debug(" =========== (2) findListsEntity ============")
-            attachCodeRepository.findByCodenameContaining(attach.codename!!, page)
+            attachCodeRepository.findByNameContaining(attach.name!!, page)
         }
 
     }

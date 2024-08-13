@@ -4,7 +4,7 @@ import jakarta.persistence.*
 import java.math.BigDecimal
 import java.time.LocalDateTime
 @Entity
-@Table(name = "onbid")
+@Table(name = "onbid_tb")
 data class OnBid(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

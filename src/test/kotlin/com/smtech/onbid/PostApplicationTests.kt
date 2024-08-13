@@ -22,7 +22,7 @@ class PostApplicationTests {
 
     @Test
     fun `test findPost Post entity`() {
-       val list: List<Post> = postRepository.findBySigunguLikeDolomyeongLikeBeobjeongdongmyeong("은평구","은평구","대조동")
+       val list: List<Post> = postRepository.findBySigunguLikeDolomyeongLikeBeobjeongdongmyeong("은평구",10)
         //list
         //assert(list.size)
 //        assertEquals(1, list.size)

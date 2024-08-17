@@ -1,10 +1,9 @@
 package com.smtech.onbid.data.repository
 
-import com.smtech.onbid.entity.Post
+import com.smtech.onbid.data.entity.Post
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
-import org.springframework.stereotype.Repository
 
 //@Repository
 interface PostRepository: JpaRepository<Post,Long> {

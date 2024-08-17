@@ -2,19 +2,31 @@ package com.smtech.onbid.data.dto
 
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
-import org.hibernate.validator.constraints.Length
 
 data class OnBidDTO(
 
-        @field:NotNull(message = "정확한 주소를 입력해주세요!")
-        @field:Size(min = 1, message = "주소는 최소 1자 이상이어야 합니다.")
-        val addr1: String
+//        @field:NotNull(message = "정확한 주소를 입력해주세요!")
+//        @field:Size(min = 1, message = "주소는 최소 1자 이상이어야 합니다.")
+        var addr1: String?
+      , var detailAddress:String?    /* 상세 주소 */
+      , var rd_addr: String? /* 도로명 주소 */
 
-      , var addr2:String
-      , @field:NotNull(message = "데이터가 누락되었습니다.")
-        @field:Size(min = 1, message = "데이터는 최소 1자 이상이어야 합니다.")
-        val bankruptcyPhone:String
+//       @field:NotNull(message = "데이터가 누락되었습니다.")
+//        @field:Size(min = 1, message = "데이터는 최소 1자 이상이어야 합니다.")
+       , var bruptcy_admin_phone:String? /* 파산관제인전화번호 */
 
-      , @field:NotNull
-        val bankruptcyName: String
+//      , @field:NotNull
+       , var bruptcy_admin_name: String?  /* 파산관제인명 */
+
+      , var note: String? /* 유의사항 주소 */
+      , var memo: String? /* 메모 주소 */
+      , var renter:String? /* 임차여부 */
+      , var ld_area: String? /* 토지 */
+      , var build_area: String? /* 건축물 */
+      , var estateType:String?  /* 부동산종류 */
+      , var disposal_type:String?
+      , var land_classification: String? = null /* 지목 */
+      , var progress_status: String? = null  /* 진행상태 */
+      , var page: Int = 0
+      , var size: Int = 10
 )

@@ -1,9 +1,7 @@
 package com.smtech.onbid
 
-import com.smtech.onbid.data.repository.OnBidRepository
 import com.smtech.onbid.data.repository.PostRepository
-import com.smtech.onbid.entity.Post
-import org.junit.jupiter.api.Assertions.assertEquals
+import com.smtech.onbid.data.entity.Post
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest

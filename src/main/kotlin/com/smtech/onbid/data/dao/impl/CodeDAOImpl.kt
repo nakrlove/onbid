@@ -2,7 +2,7 @@ package com.smtech.onbid.data.dao.impl
 
 import com.smtech.onbid.data.dao.CodeDAO
 import com.smtech.onbid.data.repository.CodeRepository
-import com.smtech.onbid.entity.Codes
+import com.smtech.onbid.data.entity.Codes
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired

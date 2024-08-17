@@ -1,7 +1,7 @@
 package com.smtech.onbid.handler.impl
 
 import com.smtech.onbid.data.dao.PostDAO
-import com.smtech.onbid.entity.Post
+import com.smtech.onbid.data.entity.Post
 import com.smtech.onbid.handler.PostDataHandler
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

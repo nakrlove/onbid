@@ -1,6 +1,6 @@
 package com.smtech.onbid.data.repository
 
-import com.smtech.onbid.entity.OnBidFile
+import com.smtech.onbid.data.entity.OnBidFile
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 

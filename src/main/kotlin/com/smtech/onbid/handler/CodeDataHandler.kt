@@ -1,6 +1,6 @@
 package com.smtech.onbid.handler
 
-import com.smtech.onbid.entity.Codes
+import com.smtech.onbid.data.entity.Codes
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import java.util.*

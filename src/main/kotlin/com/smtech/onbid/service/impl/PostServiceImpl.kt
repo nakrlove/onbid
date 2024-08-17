@@ -1,6 +1,6 @@
 package com.smtech.onbid.service.impl
 
-import com.smtech.onbid.entity.Post
+import com.smtech.onbid.data.entity.Post
 import com.smtech.onbid.handler.PostDataHandler
 import com.smtech.onbid.service.PostService
 import org.springframework.beans.factory.annotation.Autowired

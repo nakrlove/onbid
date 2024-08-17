@@ -1,7 +1,7 @@
 package com.smtech.onbid.handler.impl
 
 import com.smtech.onbid.data.dao.CodeDAO
-import com.smtech.onbid.entity.Codes
+import com.smtech.onbid.data.entity.Codes
 import com.smtech.onbid.handler.CodeDataHandler
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired

@@ -1,6 +1,7 @@
 package com.smtech.onbid.controller
 
 import com.smtech.onbid.data.dto.CodeDTO
+import com.smtech.onbid.data.entity.Codes
 import com.smtech.onbid.service.CodeService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
@@ -76,9 +77,16 @@ class CodeController(@Autowired val codeservice: CodeService) {
    * 파일첨부 구분코드
    */
     @PostMapping("/file-code")
-    fun onFileCodeList(): ResponseEntity<out Any> {
-
-        val result = codeservice.findCodeQuery()
+    fun onFileCodeList(@RequestParam("codes") codes: String?): ResponseEntity<out Any> {
+        var result: List<Codes>? = null
+        codes?.let{
+            println(" === 1) onFileCodeList ===========")
+            result = codeservice.findCodeQuery(codes)
+        } ?: run {
+            println(" === 2) onFileCodeList ===========")
+            result = codeservice.findCodeQuery()
+        }
+//        val result = codeservice.findCodeQuery()
         println("=attachmentDTO result=${result}")
         return ResponseEntity.status(HttpStatus.OK).body(result)
     }

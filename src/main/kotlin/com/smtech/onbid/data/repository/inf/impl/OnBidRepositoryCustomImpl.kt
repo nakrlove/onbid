@@ -1,0 +1,27 @@
+package com.smtech.onbid.data.repository.inf.impl
+
+import com.smtech.onbid.data.dto.OnBidMapDTO
+import com.smtech.onbid.data.repository.inf.OnBidRepositoryCustom
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
+import org.springframework.stereotype.Repository
+
+@Repository
+class OnBidRepositoryCustomImpl : OnBidRepositoryCustom {
+    @PersistenceContext
+    private lateinit var entityManager: EntityManager
+
+    override fun findOnBidWithDetails(searchTerm: String?, limit: Int, offset: Int): List<OnBidMapDTO> {
+        val query = entityManager.createNamedQuery("findOnBidWithDetails", OnBidMapDTO::class.java)
+        query.setParameter("searchTerm", searchTerm)
+        query.setParameter("limit", limit)
+        query.setParameter("offset", offset)
+        return query.resultList
+    }
+
+    override fun countOnBidWithDetails(searchTerm: String?): Long {
+        val query = entityManager.createNamedQuery("countOnBidWithDetails")
+        query.setParameter("searchTerm", searchTerm)
+        return (query.singleResult as Number).toLong()
+    }
+}

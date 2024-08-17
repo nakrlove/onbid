@@ -2,7 +2,7 @@ package com.smtech.onbid.data.dao.impl
 
 import com.smtech.onbid.data.dao.PostDAO
 import com.smtech.onbid.data.repository.PostRepository
-import com.smtech.onbid.entity.Post
+import com.smtech.onbid.data.entity.Post
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

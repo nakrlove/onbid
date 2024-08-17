@@ -2,8 +2,7 @@ package com.smtech.onbid
 
 import com.smtech.onbid.data.repository.OnBidDaysRepository
 import com.smtech.onbid.data.repository.OnBidRepository
-import com.smtech.onbid.entity.OnBid
-import com.smtech.onbid.entity.OnBidDays
+import com.smtech.onbid.data.entity.OnBid
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -38,15 +37,15 @@ class OnbidApplicationTests {
 
 		// When
 		val savedOnBid = onBidRepository.save(onBid)
-
-		val onBidDays = OnBidDays(
-			startDays = LocalDateTime.now(),
-			endDays = LocalDateTime.now().plusDays(1),
-			regdate = LocalDateTime.now(),
-			onBid = savedOnBid // OnBid 엔티티와 관계 설정
-		)
-		savedOnBid.addOnBidDay(onBidDays)
-		onBidRepository.save(savedOnBid)
+//
+//		val onBidDays = OnBidDays(
+//			startDays = LocalDateTime.now(),
+//			endDays = LocalDateTime.now().plusDays(1),
+//			regdate = LocalDateTime.now(),
+//			onBid = savedOnBid // OnBid 엔티티와 관계 설정
+//		)
+//		savedOnBid.addOnBidDay(onBidDays)
+//		onBidRepository.save(savedOnBid)
 
 //		val savedOnBidDays = onBidDaysRepository.save(onBidDays)
 		// Then

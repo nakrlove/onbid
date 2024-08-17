@@ -2,21 +2,47 @@ package com.smtech.onbid.service.impl
 
 import com.smtech.onbid.data.dto.OnBidDTO
 import com.smtech.onbid.data.dto.OnBidDayDTO
-import com.smtech.onbid.entity.Memos
-import com.smtech.onbid.entity.OnBid
-import com.smtech.onbid.entity.OnBidDays
-import com.smtech.onbid.entity.OnBidFile
+import com.smtech.onbid.data.dto.OnBidMapDTO
+import com.smtech.onbid.data.entity.Memos
+import com.smtech.onbid.data.entity.OnBid
+import com.smtech.onbid.data.entity.OnBidDays
+import com.smtech.onbid.data.entity.OnBidFile
+import com.smtech.onbid.data.repository.OnBidRepository
+import com.smtech.onbid.data.entity.wapper.BidWrapper
 import com.smtech.onbid.handler.OnBidDataHandler
 import com.smtech.onbid.service.OnBidService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
-import java.math.BigDecimal
 
 @Service
-class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler): OnBidService{
+class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler,@Autowired val onbidRepository: OnBidRepository): OnBidService{
+
+    override fun findAll(onBid: OnBidDTO, page: PageRequest): BidWrapper {
+        val data = OnBid( addr1 = onBid.addr1
+            , addr2 = onBid.detailAddress
+            , rd_addr = onBid.rd_addr
+            , bruptcy_admin_name = onBid.bruptcy_admin_name
+            , bruptcy_admin_phone = onBid.bruptcy_admin_phone
+        )
+
+        val count = onbidRepository.count()
+        println("(@) ====== findAll =count [${count}]")
+        val resultList =  onBidHandler.findAlls(page)
+        println("(@) ====== findAll =count [${count}]")
+        return BidWrapper(count,resultList)
+    }
+
+    override fun findOnBidWithDetails(searchTerm: String?, limit: Int, offset: Int): List<OnBidMapDTO> {
+        return onBidHandler.findOnBidWithDetails(searchTerm,limit,offset)
+    }
+
+    override fun countOnBidWithDetails(searchTerm: String?): Long {
+        return onBidHandler.countOnBidWithDetails(searchTerm)
+    }
+
 
 //    @Transactional
 //    override fun saveOnBid(onBidDTO: OnBidDTO, fileBytes: MultipartFile?, additionalFilesBytes: List<MultipartFile>?): OnBid {
@@ -54,7 +80,8 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler): OnBidServ
 //        return onbid
 //    }
 
-    @Transactional
+
+//    @Transactional
     override fun saveOnBid(  onBidDTO: OnBidDTO
                            , options: List<String>?
                            , additionalFiles: List<MultipartFile>?
@@ -84,6 +111,9 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler): OnBidServ
             , build_area = onBidDTO.build_area
             , estateType = onBidDTO.estateType
             , disposal_type = onBidDTO.disposal_type
+            , note = onBidDTO.note
+            , land_classification = onBidDTO.land_classification
+            , progress_status = onBidDTO.progress_status
         )
 
         /**
@@ -126,32 +156,15 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler): OnBidServ
             }
         }
 
-
         //=========================================================//
-        val memos: MutableList<Memos>  = mutableListOf()
-        val note = onBidDTO.note?.let{
-            /* 035: 유의사항 */
-            Memos(code="035",memo_contents = onBidDTO.note, onNote = onbid)
-        }
-        note?.let{
-            memos.add(note)
-        }
-        val memo = onBidDTO.memo?.let{
-            /* 035: 메모 */
-            Memos(code="036",memo_contents = onBidDTO.memo, onNote = onbid)
-        }
-        memo?.let{
-            memos.add(memo)
-        }
         /**
-         * 유의사항/메모 등록
+         * 메모 등록
          */
-        memos?.let{
-            it.forEach{ item ->
-                onbid.addNoteDay(item)
-            }
+
+        if (onBidDTO.memo.isNullOrEmpty().not()) {
+            onbid.addMemo(Memos(memo_contents = onBidDTO.memo, onMemo = onbid))
         }
-        //=========================================================//
+       //================================================//
 
         /* 기본정보 저장 */
         return onBidHandler.saveOnBidEntity(onbid)

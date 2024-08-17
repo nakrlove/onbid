@@ -1,4 +1,4 @@
-package com.smtech.onbid.entity
+package com.smtech.onbid.data.entity
 
 import jakarta.persistence.*
 

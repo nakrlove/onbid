@@ -1,17 +1,21 @@
 package com.smtech.onbid.controller
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.smtech.onbid.data.dto.OnBidDTO
-import com.smtech.onbid.entity.OnBid
+import com.smtech.onbid.data.dto.OnBidDayDTO
+import com.smtech.onbid.data.entity.wapper.BidAllWrapper
+import com.smtech.onbid.data.entity.wapper.BidWrapper
 import com.smtech.onbid.service.OnBidService
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
-import java.io.File
-import java.io.IOException
 
 @RestController
 @RequestMapping(value=["/api/onbid"])
@@ -33,13 +37,39 @@ class OnBidController( @Autowired val onbid: OnBidService) {
     @Value("\${file.upload-dir}")
     lateinit var uploadDirPath: String
 
-    /* 특정경로에 파일을 저장
+
+    @PostMapping("/onbidList")
+    fun onBidList( @RequestBody onbidDTO: OnBidDTO): ResponseEntity<out Any>{
+        /* 조회를 역순으로 정렬요청 */
+        val sort = Sort.by(Sort.Order.desc("bididx"))
+        /* 페이지 요청 */
+        val pageable = PageRequest.of(onbidDTO.page, onbidDTO.size,sort)
+
+        val result = onbid.findAll(onbidDTO,pageable)
+        println(" pageable = [${result}]")
+        return ResponseEntity.status(HttpStatus.OK).body(result)
+    }
+
+    @PostMapping("/onbidAllList")
+    fun onBidAllList( @RequestBody onbidDTO: OnBidDTO): ResponseEntity<out Any>{
+        /* 조회를 역순으로 정렬요청 */
+//        val sort = Sort.by(Sort.Order.desc("bididx"))
+        /* 페이지 요청 */
+//        val pageable = PageRequest.of(onbidDTO.page, onbidDTO.size,sort)
+        val count = onbid.countOnBidWithDetails("")
+        val result = onbid.findOnBidWithDetails("",onbidDTO.page,onbidDTO.size)
+        println(" pageable = [${result}]")
+        val bidResult = BidAllWrapper(count,result)
+        return ResponseEntity.status(HttpStatus.OK).body(bidResult)
+    }
+
+    /* 특정경로에 파일을 저장 */
+    /*
     @PostMapping("/onbidL", consumes = ["multipart/form-data"])
     fun onBidList( @RequestPart onbidDTO: OnBidDTO
                    , @RequestPart("file") file: MultipartFile
                    , @RequestPart("additionalFiles") additionalFiles: List<MultipartFile>): ResponseEntity<out Any>{
         println("================onbidL=============")
-        
         // 파일 저장 디렉토리
         val uploadDir = File(uploadDirPath)
         if (!uploadDir.exists()) {
@@ -48,27 +78,22 @@ class OnBidController( @Autowired val onbid: OnBidService) {
         // 메인 파일 저장
         val savedFile = Utils.saveFile(file, uploadDir)
 
-        /*
-        val fileBytes = file.bytes
-        val additionalFilesBytes = additionalFiles.map{ it.bytes }
-        */
-
         // 추가 파일들 저장
         val savedAdditionalFiles = additionalFiles?.map { Utils.saveFile(it, uploadDir) } ?: emptyList()
-//        val additionalFilesBytes = additionalFiles.map{ it.bytes }
-//        onbid.saveOnBid(onbidDTO,fileBytes,additionalFilesBytes)
         onbid.saveOnBid(onbidDTO,savedFile,savedAdditionalFiles)
         return ResponseEntity.status(HttpStatus.OK).body(onbidDTO)
     }
     */
 
+
     /*
      * BLOB 컬럼에 파일저장
      */
     @PostMapping("/onbidL", consumes = ["multipart/form-data"])
-    fun onBidList( @Valid @RequestPart onbidDTO: OnBidDTO
-                 , @RequestParam("additionalFiles") additionalFiles: List<MultipartFile>?
+    fun onRegistBid( @Valid @RequestPart onbidDTO: OnBidDTO
+                 , @RequestParam("additionalFiles") additionalFiles: List<MultipartFile>?/* 파일첨부 */
                  , @RequestParam("additionalFileOptions") options: List<String>?
+                 , @RequestPart("onbidDays") onbidDaysJson: String /* 입찰일자\감정가\보증금 */
     ): ResponseEntity<out Any>{
         println("================onbidL=============")
 
@@ -81,8 +106,18 @@ class OnBidController( @Autowired val onbid: OnBidService) {
             }
         }
 
-        onbid.saveOnBid(onbidDTO, null, additionalFiles)
-        println("=====additionalFiles count[${additionalFiles?.size}]")
+        /* 입찰일자 / 감정가/보증금 */
+        val objectMapper = jacksonObjectMapper()
+        val onbidDays: List<OnBidDayDTO> = objectMapper.readValue(onbidDaysJson)
+        if (onbidDays != null ) {
+            onbidDays.forEachIndexed { index, file ->
+                val option = onbidDays[index]
+                // 파일과 옵션을 함께 저장하는 로직
+                println(" onbidDays:  sdate=${option.sdate} , edate=${option.edate} ,evalue=${option.evalue}")
+            }
+        }
+
+        onbid.saveOnBid(onbidDTO, options, additionalFiles,onbidDays)
         return ResponseEntity.status(HttpStatus.OK).body(onbidDTO)
     }
 

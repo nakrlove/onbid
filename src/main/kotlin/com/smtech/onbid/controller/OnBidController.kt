@@ -4,6 +4,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.smtech.onbid.data.dto.OnBidDTO
 import com.smtech.onbid.data.dto.OnBidDayDTO
+import com.smtech.onbid.data.dto.wrapper.OnBidWrapper
 import com.smtech.onbid.data.entity.wapper.BidAllWrapper
 import com.smtech.onbid.data.entity.wapper.BidWrapper
 import com.smtech.onbid.service.OnBidService
@@ -22,17 +23,13 @@ import org.springframework.web.multipart.MultipartFile
 class OnBidController( @Autowired val onbid: OnBidService) {
 
 
-//    @RequestMapping(value=["/onbidL"])
-//    fun onBidList(   @RequestBody onbidDTO: OnBidDTO
-//                   , @RequestParam("file") file: MultipartFile
-//                   , @RequestParam("additionalFiles") additionalFiles: List<MultipartFile>): ResponseEntity<out Any>{
-//        println("================onbidL=============")
-////        val onBidData = OnBid(null,contents = onbidDTO.contents,contphone = onbidDTO.contphone)
-//        val fileBytes = file.bytes
-//        val additionalFilesBytes = additionalFiles.map{ it.bytes }
-//        onbid.saveOnBid(onbidDTO,fileBytes,additionalFilesBytes)
-//        return ResponseEntity.status(HttpStatus.OK).body(onbidDTO)
-//    }
+    @RequestMapping(value=["/onbidLDetil"])
+    fun onBidDetail( @RequestBody onbidDTO: OnBidDTO ): ResponseEntity<out Any>{
+        println("================onbidLDetil=============")
+        val resultOnBid = onbid.findDetail(onbidDTO)
+        val resultDays = onbidDTO.bididx?.let { onbid.findDaysQuery(it) }
+        return ResponseEntity.status(HttpStatus.OK).body(OnBidWrapper(resultOnBid,resultDays))
+    }
 
     @Value("\${file.upload-dir}")
     lateinit var uploadDirPath: String

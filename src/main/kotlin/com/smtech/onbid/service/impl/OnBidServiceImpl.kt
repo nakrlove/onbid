@@ -3,12 +3,11 @@ package com.smtech.onbid.service.impl
 import com.smtech.onbid.data.dto.OnBidDTO
 import com.smtech.onbid.data.dto.OnBidDayDTO
 import com.smtech.onbid.data.dto.OnBidMapDTO
-import com.smtech.onbid.data.entity.Memos
-import com.smtech.onbid.data.entity.OnBid
-import com.smtech.onbid.data.entity.OnBidDays
-import com.smtech.onbid.data.entity.OnBidFile
+import com.smtech.onbid.data.entity.*
 import com.smtech.onbid.data.repository.OnBidRepository
 import com.smtech.onbid.data.entity.wapper.BidWrapper
+import com.smtech.onbid.data.repository.OnBidDayRepository
+import com.smtech.onbid.data.repository.OnBidDaysRepository
 import com.smtech.onbid.handler.OnBidDataHandler
 import com.smtech.onbid.service.OnBidService
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,7 +17,16 @@ import org.springframework.web.multipart.MultipartFile
 import java.io.File
 
 @Service
-class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler,@Autowired val onbidRepository: OnBidRepository): OnBidService{
+class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler,@Autowired val onbidRepository: OnBidRepository,@Autowired val onBidDayRepository: OnBidDayRepository): OnBidService{
+
+
+    override fun findDetail( onBid: OnBidDTO ):OnBidMapDTO? {
+        return onBidHandler.findDetail(OnBid(bididx = onBid.bididx))
+    }
+
+    override fun findDaysQuery(bididx: Int): List<OnBidDay> {
+        return onBidDayRepository.findDaysQuery(bididx)
+    }
 
     override fun findAll(onBid: OnBidDTO, page: PageRequest): BidWrapper {
         val data = OnBid( addr1 = onBid.addr1
@@ -114,6 +122,7 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler,@Autowired 
             , note = onBidDTO.note
             , land_classification = onBidDTO.land_classification
             , progress_status = onBidDTO.progress_status
+            , onbid_status =  onBidDTO.onbid_status
         )
 
         /**

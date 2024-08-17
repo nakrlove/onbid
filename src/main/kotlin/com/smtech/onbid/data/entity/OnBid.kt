@@ -36,7 +36,9 @@ import java.time.LocalDateTime
                 ColumnResult(name = "edate"),
                 ColumnResult(name = "evalue"),
                 ColumnResult(name = "deposit"),
-                ColumnResult(name = "land_classification_name")
+                ColumnResult(name = "land_classification_name"),
+                ColumnResult(name = "onbid_status"),
+                ColumnResult(name = "name")
             ]
         )
     ]
@@ -66,6 +68,7 @@ import java.time.LocalDateTime
                 b.progress_status,
                 d.sdate,
                 d.edate,
+                b.onbid_status,
                 FORMAT(d.evalue, 0) AS evalue,
                 FORMAT(d.deposit, 0) AS deposit,
                 ABS(DATEDIFF(CURDATE(), d.sdate)) AS sdate_diff,
@@ -103,7 +106,9 @@ import java.time.LocalDateTime
             DATE_FORMAT(c.edate, '%Y-%m-%d') AS edate,
             c.evalue,
             c.deposit,
-            e.name AS land_classification_name
+            e.name AS land_classification_name,
+            c.onbid_status,
+            '' as name
         FROM 
             closest_dates c
          left outer join 
@@ -135,6 +140,66 @@ import java.time.LocalDateTime
           AND (:searchTerm IS NULL OR b.addr1 LIKE CONCAT('%', :searchTerm, '%') OR b.addr2 LIKE CONCAT('%', :searchTerm, '%'))
     """
 )
+@NamedNativeQuery(
+    name = "onBidDetails",/* 상세보기 */
+    query = """
+      WITH onbid_detail AS (
+             SELECT 
+                    b.bididx,
+                    b.addr1,
+                    b.addr2,
+                    b.it_type,
+                    b.ld_area,
+                    ROUND(b.ld_area * 0.3025, 2) AS ld_area_pyeong,
+                    b.build_area,
+                    ROUND(b.build_area * 0.3025, 2) AS build_area_pyeong,
+                    b.rd_addr,
+                    b.streeaddr2,
+                    b.bruptcy_admin_name,
+                    b.bruptcy_admin_phone,
+                    b.renter,
+                    b.estatetype,
+                    b.disposal_type,
+                    b.note,
+                    b.land_classification,
+                    b.progress_status,
+                    b.onbid_status,
+                    b.regdate
+            FROM onbid_tb b
+          )
+          select 
+                d.bididx,
+                d.addr1,
+                d.addr2,
+                d.it_type,
+                d.ld_area,
+                d.ld_area_pyeong,
+                d.build_area,
+                d.build_area_pyeong,
+                d.rd_addr,
+                d.streeaddr2,
+                d.bruptcy_admin_name,
+                d.bruptcy_admin_phone,
+                d.renter,
+                d.estatetype,
+                d.disposal_type,
+                d.note,
+                d.land_classification,
+                d.progress_status,
+                '' as sdate,
+                '' as edate,
+                '' as evalue,
+                '' as deposit,
+                '' as land_classification_name,
+                d.onbid_status,
+                e.name
+            from onbid_detail d
+            left outer join 
+                    code_tb e ON e.code COLLATE utf8mb4_unicode_ci = d.onbid_status COLLATE utf8mb4_unicode_ci
+            where d.bididx = :bididx
+    """,
+    resultSetMapping = "OnBidWithDetailsMapping"
+)
 data class OnBid(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -154,13 +219,13 @@ data class OnBid(
     var items: String? = null,
 
     @Column(name = "LD_AREA", columnDefinition = "VARCHAR")
-    var ld_area: String? = null,
+    var ld_area: String? = null,/* 토지면적 */
 
     @Column(name = "BUILD_AREA", columnDefinition = "VARCHAR")
-    var build_area: String? = null,
+    var build_area: String? = null, /* 건물면적 */
 
     @Column(name = "RD_ADDR", columnDefinition = "TEXT")
-    var rd_addr: String? = null,
+    var rd_addr: String? = null, /* 도로명주소1 */
 
     @Column(name = "STREEADDR2", columnDefinition = "TEXT")
     var streeaddr2: String? = null,
@@ -188,6 +253,10 @@ data class OnBid(
 
     @Column(name = "PROGRESS_STATUS", columnDefinition = "VARCHAR")
     var progress_status: String? = "000",
+
+    @Column(name = "ONBID_STATUS", columnDefinition = "VARCHAR")
+    var onbid_status: String? = "038", /* 입찰진행상태(기본값 입찰중) */
+
 
     @OneToMany(mappedBy = "onMemo", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnore

@@ -34,5 +34,5 @@ data class OnBidDays(
     @JsonIgnore
     var onBid: OnBid? = null
 ){
-    constructor() : this(null, sdate = "", edate = "", null, null,null)
+    constructor() : this(daysidx = null, sdate = "", edate = "", null, null,null)
 }

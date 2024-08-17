@@ -20,6 +20,11 @@ class OnBidDataHandlerImpl(@Autowired val onBidDAO: OnBidDAO):OnBidDataHandler {
         return onBid
     }
 
+    override fun findDetail(onBid: OnBid): OnBidMapDTO? {
+        return onBidDAO.findDetail(onBid)
+    }
+
+
     override fun findAlls(page: PageRequest): Page<OnBid>? {
         return onBidDAO.findAlls(page)
     }

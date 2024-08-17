@@ -7,7 +7,8 @@ data class OnBidDTO(
 
 //        @field:NotNull(message = "정확한 주소를 입력해주세요!")
 //        @field:Size(min = 1, message = "주소는 최소 1자 이상이어야 합니다.")
-        var addr1: String?
+        var bididx: Int?
+      , var addr1: String?
       , var detailAddress:String?    /* 상세 주소 */
       , var rd_addr: String? /* 도로명 주소 */
 
@@ -27,6 +28,7 @@ data class OnBidDTO(
       , var disposal_type:String?
       , var land_classification: String? = null /* 지목 */
       , var progress_status: String? = null  /* 진행상태 */
+      , var onbid_status: String? = null /* 입찰진행상태 */
       , var page: Int = 0
       , var size: Int = 10
 )

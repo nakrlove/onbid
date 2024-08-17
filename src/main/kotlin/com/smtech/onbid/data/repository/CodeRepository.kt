@@ -17,7 +17,7 @@ interface CodeRepository: JpaRepository<Codes, Long> {
     fun findByScode(subcode: String): List<Codes>
 
 
-
+    /** 파일첨부 */
     @Query("""
         WITH duplication AS (
              select code,scode,name 
@@ -27,12 +27,13 @@ interface CodeRepository: JpaRepository<Codes, Long> {
         select ctb.idx,ctb.code,ctb.scode,ctb.name 
         from code_tb ctb inner join duplication d on d.scode <> ctb.code
         where ctb.scode = '000'
+          and ctb.code in ('001','002','004')
         group by ctb.idx,ctb.code,ctb.scode,ctb.name
     """, nativeQuery = true)
     fun findCodeQuery(): List<Codes>
 
     /**
-     * 코드조회
+     * 코드조회 (지목/면적)
      */
     @Query("""
         WITH duplication AS (
@@ -44,6 +45,7 @@ interface CodeRepository: JpaRepository<Codes, Long> {
         from code_tb ctb inner join duplication d on d.scode <> ctb.code
         where ctb.scode = :scode
         group by ctb.idx,ctb.code,ctb.scode,ctb.name
+        order by ctb.idx asc
     """, nativeQuery = true)
     fun findCodeQuery(@Param(value = "scode") scode: String): List<Codes>
 

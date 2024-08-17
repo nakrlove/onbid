@@ -20,6 +20,11 @@ class OnBidDAOImpl(@Autowired val onbidDRepository: OnBidRepository):OnBidDAO {
         return onBid
     }
 
+    /** 상세보기 */
+    override fun findDetail(onBid: OnBid): OnBidMapDTO? {
+        return onBid.bididx?.let { onbidDRepository.onBidDetails(it) }
+    }
+
 //    @Transactional(readOnly = true)
     override fun findAlls(page: PageRequest): Page<OnBid>? {
 //        return onbidDRepository.findAll(page)

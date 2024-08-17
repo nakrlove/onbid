@@ -24,4 +24,12 @@ class OnBidRepositoryCustomImpl : OnBidRepositoryCustom {
         query.setParameter("searchTerm", searchTerm)
         return (query.singleResult as Number).toLong()
     }
+
+    override fun onBidDetails(bididx: Int): OnBidMapDTO {
+        val query = entityManager.createNamedQuery("onBidDetails", OnBidMapDTO::class.java)
+        query.setParameter("bididx", bididx)
+        return query.singleResult
+    }
+
+
 }

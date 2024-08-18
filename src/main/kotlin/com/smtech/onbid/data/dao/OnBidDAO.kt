@@ -9,6 +9,7 @@ interface OnBidDAO {
     fun saveOnBid(onBid: OnBid): OnBid
     fun findDetail(onBid: OnBid): OnBidMapDTO?
     fun findAlls(page: PageRequest): Page<OnBid>?
-    fun findOnBidWithDetails(searchTerm: String?, limit: Int, offset: Int): List<OnBidMapDTO>
+    /** 목록조회 */
+    fun findOnBidLists(searchTerm: String?, limit: Int, offset: Int): List<OnBidMapDTO>
     fun countOnBidWithDetails(searchTerm: String?): Long
 }

@@ -48,7 +48,7 @@ data class OnBidMapDTO(
     val edate: String?,
     val evalue: String?,
     val deposit: String?,
-    val land_classification_name: String?,
     val onbid_status: String?,
-    val name: String?
+    val status: String?,
+    val land_classification_name: String?,
 )

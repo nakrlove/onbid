@@ -6,7 +6,6 @@ import com.smtech.onbid.data.dto.OnBidDTO
 import com.smtech.onbid.data.dto.OnBidDayDTO
 import com.smtech.onbid.data.dto.wrapper.OnBidWrapper
 import com.smtech.onbid.data.entity.wapper.BidAllWrapper
-import com.smtech.onbid.data.entity.wapper.BidWrapper
 import com.smtech.onbid.service.OnBidService
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
@@ -54,7 +53,7 @@ class OnBidController( @Autowired val onbid: OnBidService) {
         /* 페이지 요청 */
 //        val pageable = PageRequest.of(onbidDTO.page, onbidDTO.size,sort)
         val count = onbid.countOnBidWithDetails("")
-        val result = onbid.findOnBidWithDetails("",onbidDTO.page,onbidDTO.size)
+        val result = onbid.findOnBidLists("",onbidDTO.page,onbidDTO.size)
         println(" pageable = [${result}]")
         val bidResult = BidAllWrapper(count,result)
         return ResponseEntity.status(HttpStatus.OK).body(bidResult)
@@ -99,7 +98,7 @@ class OnBidController( @Autowired val onbid: OnBidService) {
             additionalFiles.forEachIndexed { index, file ->
                 val option = options[index]
                 // 파일과 옵션을 함께 저장하는 로직
-                println("File: ${file.originalFilename}, Option: $option")
+                println("File: ${file.originalFilename}, Option: $option , ${file.contentType}")
             }
         }
 

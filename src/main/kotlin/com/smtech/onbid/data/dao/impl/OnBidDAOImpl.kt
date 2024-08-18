@@ -31,8 +31,9 @@ class OnBidDAOImpl(@Autowired val onbidDRepository: OnBidRepository):OnBidDAO {
         return null
     }
 
-    override fun findOnBidWithDetails(searchTerm: String?, limit: Int, offset: Int): List<OnBidMapDTO> {
-        return onbidDRepository.findOnBidWithDetails(searchTerm,limit,offset)
+    /** 목록조회 */
+    override fun findOnBidLists(searchTerm: String?, limit: Int, offset: Int): List<OnBidMapDTO> {
+        return onbidDRepository.findOnBidLists(searchTerm,limit,offset)
     }
 
     override fun countOnBidWithDetails(searchTerm: String?): Long {

@@ -17,8 +17,12 @@ data class OnBidFile (
     @Column(name = "FILENAME")
     val fileName: String?,
 
+    @Column(name = "FILETYPE")
+    val fileType: String?,
+
     @Column(name = "FILESIZE")
     val fileSize: Long?,
+
 
     @Lob
     @Column(name = "FILE")

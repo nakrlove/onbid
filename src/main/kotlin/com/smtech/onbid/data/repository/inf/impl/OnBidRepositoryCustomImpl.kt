@@ -12,8 +12,8 @@ class OnBidRepositoryCustomImpl : OnBidRepositoryCustom {
     @PersistenceContext
     private lateinit var entityManager: EntityManager
 
-    override fun findOnBidWithDetails(searchTerm: String?, limit: Int, offset: Int): List<OnBidMapDTO> {
-        val query = entityManager.createNamedQuery("findOnBidWithDetails", OnBidMapDTO::class.java)
+    override fun findOnBidLists(searchTerm: String?, limit: Int, offset: Int): List<OnBidMapDTO> {
+        val query = entityManager.createNamedQuery("findOnBidLists", OnBidMapDTO::class.java)
         query.setParameter("searchTerm", searchTerm)
         query.setParameter("limit", limit)
         query.setParameter("offset", offset)

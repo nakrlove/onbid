@@ -6,7 +6,6 @@ import com.smtech.onbid.data.dto.OnBidMapDTO
 import com.smtech.onbid.data.entity.*
 import com.smtech.onbid.data.repository.OnBidRepository
 import com.smtech.onbid.data.entity.wapper.BidWrapper
-import com.smtech.onbid.data.repository.OnBidDayRepository
 import com.smtech.onbid.data.repository.OnBidDaysRepository
 import com.smtech.onbid.handler.OnBidDataHandler
 import com.smtech.onbid.service.OnBidService
@@ -44,8 +43,8 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler,@Autowired 
         return BidWrapper(count,resultList)
     }
 
-    override fun findOnBidWithDetails(searchTerm: String?, limit: Int, offset: Int): List<OnBidMapDTO> {
-        return onBidHandler.findOnBidWithDetails(searchTerm,limit,offset)
+    override fun findOnBidLists(searchTerm: String?, limit: Int, offset: Int): List<OnBidMapDTO> {
+        return onBidHandler.findOnBidLists(searchTerm,limit,offset)
     }
 
     override fun countOnBidWithDetails(searchTerm: String?): Long {
@@ -112,7 +111,6 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler,@Autowired 
         val onbid  = OnBid( addr1 = onBidDTO.addr1
             , addr2 = onBidDTO.detailAddress
             , rd_addr = onBidDTO.rd_addr
-//            , streeaddr2 = onBidDTO.s
             , bruptcy_admin_name = onBidDTO.bruptcy_admin_name
             , bruptcy_admin_phone = onBidDTO.bruptcy_admin_phone
             , renter = onBidDTO.renter
@@ -131,11 +129,12 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler,@Autowired 
          */
         onbidDays?.forEachIndexed { index, onBidDayDTO ->
             val onbidDate = onBidDayDTO?.let{
-                OnBidDays(  sdate    = it.sdate ?: LocalDateTime.now().toString()
-                    ,edate = it.edate ?: LocalDateTime.now().toString()
-                    ,evalue  = it.evalue
-                    ,deposit = it.deposit
-                    , onbid_status = it.onbid_status
+                OnBidDays(
+                     sdate        = it.sdate ?: LocalDateTime.now().toString()
+                    ,edate        = it.edate ?: LocalDateTime.now().toString()
+                    ,evalue       = it.evalue
+                    ,deposit      = it.deposit
+                    ,onbid_status = it.onbid_status
                     ,onBid = onbid
                 )
             }
@@ -156,6 +155,7 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler,@Autowired 
                     fileName = additionalFile.originalFilename ?: "additional_file_${additionalFiles.indexOf(additionalFile)}",
                     fileSize = additionalFile.size,
                     file = additionalFile.bytes,
+                    fileType = additionalFile.contentType,
                     code = it,
                     onBidFiles = onbid
                 )

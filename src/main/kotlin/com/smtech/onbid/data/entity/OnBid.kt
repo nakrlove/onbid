@@ -14,6 +14,86 @@ import java.time.LocalDateTime
         ConstructorResult(
             targetClass = OnBidMapDTO::class,
             columns = [
+/*
+ WITH closest_dates AS (
+        SELECT
+            b.bididx,
+            b.addr1,
+            b.addr2,
+            b.it_type,
+            b.ld_area,
+            ROUND(b.ld_area * 0.3025, 2) AS ld_area_pyeong,
+            b.build_area,
+            ROUND(b.build_area * 0.3025, 2) AS build_area_pyeong,
+            b.rd_addr,
+            b.streeaddr2,
+            b.bruptcy_admin_name,
+            b.bruptcy_admin_phone,
+            b.renter,
+            b.estatetype,
+            b.disposal_type,
+            b.note,
+            b.land_classification,
+            b.progress_status,
+            d.sdate,
+            d.edate,
+            d.evalue,
+            d.deposit,
+            d.onbid_status,
+            ABS(DATEDIFF(CURDATE(), d.sdate)) AS sdate_diff,
+            ABS(DATEDIFF(CURDATE(), d.edate)) AS edate_diff,
+            ROW_NUMBER() OVER (
+                PARTITION BY b.bididx
+                        ORDER BY
+                        CASE
+                        WHEN d.onbid_status IN ('039', '040') THEN 0
+                        ELSE LEAST(sdate_diff, edate_diff)
+                        END
+        ) AS rn
+        FROM onbid_tb b
+        INNER JOIN onbiddays_tb d ON b.bididx = d.bididx
+),
+filtered_status AS (
+        SELECT *
+                FROM closest_dates
+                WHERE rn = 1
+    AND (onbid_status IN ('039', '040') OR sdate_diff IS NOT NULL)
+),
+final_selection AS (
+    SELECT
+        bididx,
+        addr1,
+        addr2,
+        it_type,
+        ld_area,
+        ld_area_pyeong,
+        build_area,
+        build_area_pyeong,
+        rd_addr,
+        streeaddr2,
+        bruptcy_admin_name,
+        bruptcy_admin_phone,
+        renter,
+        estatetype,
+        disposal_type,
+        note,
+        land_classification,
+        progress_status,
+        sdate,
+        edate,
+        evalue,
+        deposit,
+        onbid_status
+    FROM filtered_status
+    WHERE rn = 1
+)
+SELECT
+    f.*,
+    c.name AS land_classification_name
+FROM final_selection f
+LEFT JOIN code_tb c ON c.code COLLATE utf8mb4_unicode_ci = f.land_classification COLLATE utf8mb4_unicode_ci
+*/
+
                 ColumnResult(name = "bididx"),
                 ColumnResult(name = "addr1"),
                 ColumnResult(name = "addr2"),

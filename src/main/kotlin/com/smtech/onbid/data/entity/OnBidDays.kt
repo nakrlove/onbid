@@ -25,6 +25,9 @@ data class OnBidDays(
     @Column(name = "DEPOSIT")
     var deposit: String?,
 
+    @Column(name = "ONBID_STATUS")
+    var onbid_status: String?,
+
     @Column(name = "REGDATE")
     var regdate: LocalDateTime? = null,
 
@@ -34,5 +37,5 @@ data class OnBidDays(
     @JsonIgnore
     var onBid: OnBid? = null
 ){
-    constructor() : this(daysidx = null, sdate = "", edate = "", null, null,null)
+    constructor() : this(daysidx = null, sdate = LocalDateTime.now().toString(), edate = LocalDateTime.now().toString(), null, null,null,null)
 }

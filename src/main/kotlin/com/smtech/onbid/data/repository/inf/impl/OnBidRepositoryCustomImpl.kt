@@ -1,5 +1,6 @@
 package com.smtech.onbid.data.repository.inf.impl
 
+import com.smtech.onbid.data.dto.OnBidDayDTO
 import com.smtech.onbid.data.dto.OnBidMapDTO
 import com.smtech.onbid.data.repository.inf.OnBidRepositoryCustom
 import jakarta.persistence.EntityManager
@@ -31,5 +32,10 @@ class OnBidRepositoryCustomImpl : OnBidRepositoryCustom {
         return query.singleResult
     }
 
-
+//    @Suppress("UNCHECKED_CAST")
+    override fun findDaysQuery(bididx: Int): List<OnBidDayDTO> {
+        val query = entityManager.createNamedQuery("findDaysQuery", OnBidDayDTO::class.java)
+        query.setParameter("bididx", bididx)
+        return query.resultList
+    }
 }

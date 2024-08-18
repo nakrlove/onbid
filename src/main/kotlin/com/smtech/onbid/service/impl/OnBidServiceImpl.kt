@@ -15,17 +15,18 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
+import java.time.LocalDateTime
 
 @Service
-class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler,@Autowired val onbidRepository: OnBidRepository,@Autowired val onBidDayRepository: OnBidDayRepository): OnBidService{
+class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler,@Autowired val onbidRepository: OnBidRepository,@Autowired val onBidDaysRepository: OnBidDaysRepository): OnBidService{
 
 
     override fun findDetail( onBid: OnBidDTO ):OnBidMapDTO? {
         return onBidHandler.findDetail(OnBid(bididx = onBid.bididx))
     }
 
-    override fun findDaysQuery(bididx: Int): List<OnBidDay> {
-        return onBidDayRepository.findDaysQuery(bididx)
+    override fun findDaysQuery(bididx: Int): List<OnBidDayDTO> {
+        return onbidRepository.findDaysQuery(bididx)
     }
 
     override fun findAll(onBid: OnBidDTO, page: PageRequest): BidWrapper {
@@ -130,10 +131,11 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler,@Autowired 
          */
         onbidDays?.forEachIndexed { index, onBidDayDTO ->
             val onbidDate = onBidDayDTO?.let{
-                OnBidDays(  sdate    = onBidDayDTO.sdate
-                    ,edate = onBidDayDTO.edate
-                    ,evalue  = onBidDayDTO.evalue
-                    ,deposit = onBidDayDTO.deposit
+                OnBidDays(  sdate    = it.sdate ?: LocalDateTime.now().toString()
+                    ,edate = it.edate ?: LocalDateTime.now().toString()
+                    ,evalue  = it.evalue
+                    ,deposit = it.deposit
+                    , onbid_status = it.onbid_status
                     ,onBid = onbid
                 )
             }

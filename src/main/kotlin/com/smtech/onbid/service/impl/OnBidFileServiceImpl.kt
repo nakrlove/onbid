@@ -1,9 +1,9 @@
 package com.smtech.onbid.service.impl
 
 import com.smtech.onbid.data.dao.OnBidFileDAO
+import com.smtech.onbid.data.dto.OnBidFileDTO
 import com.smtech.onbid.data.entity.OnBidFile
-import com.smtech.onbid.data.repository.FileStorageRepository
-import com.smtech.onbid.service.FileStorageService
+import com.smtech.onbid.service.OnBidFileService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.io.ByteArrayInputStream
@@ -11,7 +11,7 @@ import java.io.InputStream
 import java.util.*
 
 @Service
-class FileStorageServiceImpl(@Autowired val fileDAO: OnBidFileDAO): FileStorageService {
+class OnBidFileServiceImpl(@Autowired val fileDAO: OnBidFileDAO): OnBidFileService {
 
     override fun getFileById(id: Int): Optional<OnBidFile> {
         return fileDAO.findById(id)
@@ -32,5 +32,10 @@ class FileStorageServiceImpl(@Autowired val fileDAO: OnBidFileDAO): FileStorageS
                 }
         }
 
+    }
+
+    /** 등록된 파일카테고리 목록조회 */
+    override fun getFileCategory(bididx: Int): List<OnBidFileDTO> {
+        return fileDAO.getFileCategory(bididx)
     }
 }

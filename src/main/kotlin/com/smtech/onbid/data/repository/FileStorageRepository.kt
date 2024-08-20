@@ -7,5 +7,5 @@ import java.util.*
 
 @Repository
 interface FileStorageRepository : JpaRepository<OnBidFile, Int> {
-   override fun findById(id: Int): Optional<OnBidFile>
+//   override fun findById(id: Int): Optional<OnBidFile>
 }

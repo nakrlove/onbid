@@ -1,5 +1,6 @@
 package com.smtech.onbid.data.entity
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import java.time.LocalDateTime
@@ -15,12 +16,10 @@ data class Memos(
     @Column(name = "IDX")
     val idx: Int? = null,
 
-//    @Column(name = "CODE")
-//    var code: String? = null,
-
     @Column(name = "MEMO_CONTENTS" , columnDefinition = "TEXT")
     var memo_contents: String? = null,
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "REGDATE", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
     var regdate: LocalDateTime? = LocalDateTime.now(),
 

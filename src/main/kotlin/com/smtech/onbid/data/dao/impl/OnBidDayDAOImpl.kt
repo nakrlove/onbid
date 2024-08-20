@@ -14,6 +14,8 @@ class OnBidDayDAOImpl(@Autowired val onBidDayRepository: OnBidDayRepository) : O
         return onBidDayRepository.findBidDaysQuery(bididx)
     }
 
+
+    /** 수정 */
     override fun statusUpdate(onBidday: OnBidDay): OnBidDay? {
 
         var optionalEntity = onBidDayRepository.findById(onBidday.daysidx!!)

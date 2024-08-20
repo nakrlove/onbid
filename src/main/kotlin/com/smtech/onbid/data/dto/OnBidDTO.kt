@@ -1,8 +1,5 @@
 package com.smtech.onbid.data.dto
 
-import jakarta.validation.constraints.NotNull
-import jakarta.validation.constraints.Size
-
 data class OnBidDTO(
 
 //        @field:NotNull(message = "정확한 주소를 입력해주세요!")

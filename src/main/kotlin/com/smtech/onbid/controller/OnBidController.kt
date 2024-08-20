@@ -2,10 +2,13 @@ package com.smtech.onbid.controller
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.smtech.onbid.data.dto.MemoDTO
 import com.smtech.onbid.data.dto.OnBidDTO
 import com.smtech.onbid.data.dto.OnBidDayDTO
 import com.smtech.onbid.data.dto.wrapper.OnBidWrapper
+import com.smtech.onbid.data.entity.Memos
 import com.smtech.onbid.data.entity.wapper.BidAllWrapper
+import com.smtech.onbid.service.MemoService
 import com.smtech.onbid.service.OnBidService
 import jakarta.validation.Valid
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,15 +22,19 @@ import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping(value=["/api/onbid"])
-class OnBidController( @Autowired val onbid: OnBidService) {
+class OnBidController( @Autowired val onbid: OnBidService,@Autowired val onbidMemo: MemoService) {
 
 
-    @RequestMapping(value=["/onbidLDetil"])
+    @RequestMapping(value=["/onBidDetil"])
     fun onBidDetail( @RequestBody onbidDTO: OnBidDTO ): ResponseEntity<out Any>{
         println("================onbidLDetil=============")
+        /* 상세조회 */
         val resultOnBid = onbid.findDetail(onbidDTO)
+        /* 입찰일자 조회 */
         val resultDays = onbidDTO.bididx?.let { onbid.findDaysQuery(it) }
-        return ResponseEntity.status(HttpStatus.OK).body(OnBidWrapper(resultOnBid,resultDays))
+        /* memo 목록조회 */
+        val resultMemos = onbidDTO.bididx?.let { onbidMemo.findMemos(MemoDTO(bididx = it)) }
+        return ResponseEntity.status(HttpStatus.OK).body(OnBidWrapper(resultOnBid,resultDays,resultMemos))
     }
 
     @Value("\${file.upload-dir}")

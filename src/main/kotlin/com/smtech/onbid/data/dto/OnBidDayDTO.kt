@@ -12,5 +12,6 @@ data class OnBidDayDTO(
     val bididx: Int?,
     val onbid_status: String?, // 입찰 진행 상태
     val regdate: String?,
-    val name: String?
+    val name: String?,
+    val BBlig: Int,
 )

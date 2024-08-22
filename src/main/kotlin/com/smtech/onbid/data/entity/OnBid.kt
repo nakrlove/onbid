@@ -252,10 +252,10 @@ data class OnBid(
     var regdate: LocalDateTime? = LocalDateTime.now(),
 
     @Column(name = "IT_TYPE", columnDefinition = "VARCHAR")
-    var items: String? = null,
+    var items: String? = null,    /* 물건구분 */
 
     @Column(name = "LD_AREA", columnDefinition = "VARCHAR")
-    var ld_area: String? = null,/* 토지면적 */
+    var ld_area: String? = null,   /* 토지면적 */
 
     @Column(name = "BUILD_AREA", columnDefinition = "VARCHAR")
     var build_area: String? = null, /* 건물면적 */
@@ -264,34 +264,34 @@ data class OnBid(
     var rd_addr: String? = null, /* 도로명주소1 */
 
     @Column(name = "STREEADDR2", columnDefinition = "TEXT")
-    var streeaddr2: String? = null,
+    var streeaddr2: String? = null, /* 도로명주소2 */
 
     @Column(name = "BRUPTCY_ADMIN_NAME", columnDefinition = "VARCHAR")
-    var bruptcy_admin_name: String? = null,
+    var bruptcy_admin_name: String? = null,  /* 파산관제인전화번호 */
 
     @Column(name = "BRUPTCY_ADMIN_PHONE", columnDefinition = "VARCHAR")
     var bruptcy_admin_phone: String? = null,
 
-    @Column(name = "RENTER", columnDefinition = "TEXT")
-    var renter: String? = null,
+    @Column(name = "RENTER", columnDefinition = "VARCHAR")
+    var renter: String? = null,               /* 임차여부 */
 
-    @Column(name = "ESTATETYPE", columnDefinition = "TEXT")
-    var estateType: String? = null,
+    @Column(name = "ESTATETYPE", columnDefinition = "VARCHAR")
+    var estateType: String? = null,           /* 부동산종류 */
 
     @Column(name = "DISPOSAL_TYPE", columnDefinition = "VARCHAR")
-    var disposal_type: String? = null,
+    var disposal_type: String? = null,        /* 처분방식 */
 
     @Column(name = "NOTE", columnDefinition = "TEXT")
-    var note: String? = null,
+    var note: String? = null,                 /* 유의사항 */
 
     @Column(name = "LAND_CLASSIFICATION", columnDefinition = "VARCHAR")
-    var land_classification: String? = null,
+    var land_classification: String? = null,  /* 지목 */
 
     @Column(name = "PROGRESS_STATUS", columnDefinition = "VARCHAR")
-    var progress_status: String? = "000",
+    var progress_status: String? = "000",     /* 진행상태 */
 
     @Column(name = "ONBID_STATUS", columnDefinition = "VARCHAR")
-    var onbid_status: String? = "038", /* 입찰진행상태(기본값 입찰중) */
+    var onbid_status: String? = "038",        /* 입찰진행상태(기본값 입찰중) */
 
 
     @OneToMany(mappedBy = "onMemo", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)

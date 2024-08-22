@@ -20,7 +20,8 @@ import java.time.LocalDateTime
                 ColumnResult(name = "bididx"),
                 ColumnResult(name = "onbid_status"),
                 ColumnResult(name = "regdate"),
-                ColumnResult(name = "name")
+                ColumnResult(name = "name"),
+                ColumnResult(name = "BBlig"),
             ]
         )
     ]
@@ -48,6 +49,7 @@ import java.time.LocalDateTime
             ,b.onbid_status
             ,b.regdate
             ,c.name
+            ,'' as BBlig
        FROM onbiddays b 
        LEFT OUTER JOIN code_tb c ON c.code COLLATE utf8mb4_unicode_ci = b.onbid_status COLLATE utf8mb4_unicode_ci
       WHERE b.bididx = :bididx
@@ -58,30 +60,44 @@ import java.time.LocalDateTime
 @NamedNativeQuery(
     name = "findDaysQuery",
     query = """
-      WITH  onbiddays AS (
-         SELECT date_format(sdate,'%Y-%m-%d') as sdate 
-               ,date_format(edate,'%Y-%m-%d') as edate
-               ,format(evalue,0) as evalue
-               ,format(deposit,0) as deposit
-               ,daysidx
-               ,bididx
-               ,onbid_status
-               ,COALESCE(date_format(regdate, '%Y-%m-%d %H:%i:%s'), '') AS regdate
-        FROM   onbiddays_tb
-      )
-      SELECT b.sdate 
-            ,b.edate
-            ,b.evalue
-            ,b.deposit
-            ,b.daysidx
-            ,b.bididx
-            ,b.onbid_status
-            ,b.regdate
-            ,c.name
-       FROM onbiddays b 
-       LEFT OUTER JOIN code_tb c ON c.code COLLATE utf8mb4_unicode_ci = b.onbid_status COLLATE utf8mb4_unicode_ci
-      WHERE b.bididx = :bididx
-      ORDER BY b.daysidx asc
+        WITH onbiddays AS (
+                SELECT date_format(sdate, '%Y-%m-%d') AS sdate,
+                       date_format(edate, '%Y-%m-%d') AS edate,
+                       format(evalue, 0) AS evalue,
+                       format(deposit, 0) AS deposit,
+                       daysidx,
+                       bididx,
+                       onbid_status,
+                       COALESCE(date_format(regdate, '%Y-%m-%d %H:%i:%s'), '') AS regdate
+                FROM onbiddays_tb
+        )
+        SELECT b.sdate,
+               b.edate,
+               b.evalue,
+               b.deposit,
+               b.daysidx,
+               b.bididx,
+               CASE 
+                   WHEN b.edate < CURDATE() AND (b.onbid_status IS NULL OR b.onbid_status = '') THEN '041'
+                   WHEN b.onbid_status = '039' THEN '039'
+                   WHEN b.onbid_status = '040' THEN '040'
+                   WHEN b.onbid_status NOT IN ( '039', '040', '041') THEN '000'
+                   ELSE '001'
+               END AS onbid_status,
+               
+              -- b.onbid_status,
+               b.regdate,
+               CASE 
+                   WHEN b.edate < CURDATE() AND (b.onbid_status IS NULL OR b.onbid_status = '') THEN '유찰'
+                   WHEN b.onbid_status = '039' THEN '낙찰'
+                   WHEN b.onbid_status = '040' THEN '취소'
+                   WHEN b.onbid_status NOT IN ('039', '040', '041') THEN NULL
+               END AS name,
+               DATEDIFF(b.sdate, CURDATE()) as BBlig
+        FROM onbiddays b
+        LEFT OUTER JOIN code_tb c ON c.code COLLATE utf8mb4_unicode_ci = b.onbid_status COLLATE utf8mb4_unicode_ci
+        WHERE b.bididx =  :bididx
+        ORDER BY b.daysidx asc
     """,
     resultSetMapping = "OnBidDaysWithDetailsMapping"
 )

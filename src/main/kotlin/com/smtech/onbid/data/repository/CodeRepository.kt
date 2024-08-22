@@ -26,8 +26,8 @@ interface CodeRepository: JpaRepository<Codes, Long> {
         )
         select ctb.idx,ctb.code,ctb.scode,ctb.name 
         from code_tb ctb inner join duplication d on d.scode <> ctb.code
-        where ctb.scode = '000'
-          and ctb.code in ('001','002','004','041')
+        where ctb.scode = '043' /* 파일첨부용도 */
+        --  and ctb.code in ('001','002','004','041')
         group by ctb.idx,ctb.code,ctb.scode,ctb.name
     """, nativeQuery = true)
     fun findCodeQuery(): List<Codes>

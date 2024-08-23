@@ -15,7 +15,6 @@ class OnBidDaysServiceImpl(@Autowired val onBidDayDAO: OnBidDayDAO): OnBidDaysSe
     @Transactional
     override fun statusUpdate(onBidDay: OnBidDayDTO): OnBidDay?{
         val param = OnBidDay( daysidx = onBidDay.daysidx!!
-            ,sdate = LocalDateTime.now().toString()
             ,edate = LocalDateTime.now().toString()
             ,evalue = null
             ,deposit = null

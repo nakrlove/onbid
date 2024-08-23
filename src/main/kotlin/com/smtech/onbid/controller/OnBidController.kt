@@ -116,7 +116,7 @@ class OnBidController( @Autowired val onbid: OnBidService,@Autowired val onbidMe
             onbidDays.forEachIndexed { index, file ->
                 val option = onbidDays[index]
                 // 파일과 옵션을 함께 저장하는 로직
-                println(" onbidDays:  sdate=${option.sdate} , edate=${option.edate} ,evalue=${option.evalue}")
+                println(" onbidDays:  , edate=${option.edate} ,evalue=${option.evalue}")
             }
         }
 

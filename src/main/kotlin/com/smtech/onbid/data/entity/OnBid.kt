@@ -33,7 +33,7 @@ import java.time.LocalDateTime
                 ColumnResult(name = "note"),
                 ColumnResult(name = "land_classification"),
                 ColumnResult(name = "progress_status"),
-                ColumnResult(name = "sdate"),
+//                ColumnResult(name = "sdate"),
                 ColumnResult(name = "edate"),
                 ColumnResult(name = "evalue"),
                 ColumnResult(name = "deposit"),
@@ -67,19 +67,20 @@ import java.time.LocalDateTime
                     b.note,
                     b.land_classification,
                     b.progress_status,
-                    DATE_FORMAT(d.sdate, '%Y-%m-%d') AS sdate,
+                   -- DATE_FORMAT(d.sdate, '%Y-%m-%d') AS sdate,
                     DATE_FORMAT(d.edate, '%Y-%m-%d') AS edate,
                     FORMAT(d.evalue,0) AS evalue,
                     FORMAT(d.deposit,0) AS deposit,
                     d.onbid_status,
-                    ABS(DATEDIFF(CURDATE(), d.sdate)) AS sdate_diff,
+                   -- ABS(DATEDIFF(CURDATE(), d.sdate)) AS sdate_diff,
                     ABS(DATEDIFF(CURDATE(), d.edate)) AS edate_diff,
                     ROW_NUMBER() OVER (
                         PARTITION BY b.bididx
                                 ORDER BY
                                 CASE
                                 WHEN d.onbid_status IN ('039', '040') THEN 0
-                                ELSE LEAST(sdate_diff, edate_diff)
+                                -- ELSE LEAST(sdate_diff, edate_diff)
+                                ELSE LEAST(edate_diff, edate_diff)
                                 END
                 ) AS rn,
                 c.name as status
@@ -91,7 +92,8 @@ import java.time.LocalDateTime
                 SELECT *
                   FROM closest_dates
                  WHERE rn = 1
-            AND (onbid_status IN ('039', '040') OR sdate_diff IS NOT NULL)
+           -- AND (onbid_status IN ('039', '040') OR sdate_diff IS NOT NULL) 
+            AND (onbid_status IN ('039', '040') OR edate_diff IS NOT NULL)
         ),
         final_selection AS (
             SELECT
@@ -113,7 +115,7 @@ import java.time.LocalDateTime
                 note,
                 land_classification,
                 progress_status,
-                sdate,
+              --  sdate,
                 edate,
                 evalue,
                 deposit,
@@ -141,7 +143,7 @@ import java.time.LocalDateTime
             f.note,
             f.land_classification,
             f.progress_status,
-            f.sdate,
+           -- f.sdate,
             f.edate,
             f.evalue,
             f.deposit,
@@ -223,7 +225,7 @@ import java.time.LocalDateTime
                 d.note,
                 d.land_classification,
                 d.progress_status,
-                '' as sdate,
+               -- '' as sdate,
                 '' as edate,
                 '' as evalue,
                 '' as deposit,
@@ -293,6 +295,9 @@ data class OnBid(
     @Column(name = "ONBID_STATUS", columnDefinition = "VARCHAR")
     var onbid_status: String? = "038",        /* 입찰진행상태(기본값 입찰중) */
 
+
+    @Column(name = "DEBTOR", columnDefinition = "VARCHAR")
+    var debtor: String? = null,        /* 채무자명 */
 
     @OneToMany(mappedBy = "onMemo", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnore

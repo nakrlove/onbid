@@ -130,8 +130,8 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler,@Autowired 
         onbidDays?.forEachIndexed { index, onBidDayDTO ->
             val onbidDate = onBidDayDTO?.let{
                 OnBidDays(
-                     sdate        = it.sdate ?: LocalDateTime.now().toString()
-                    ,edate        = it.edate ?: LocalDateTime.now().toString()
+//                     sdate        = it.sdate ?: LocalDateTime.now().toString()
+                     edate        = it.edate ?: LocalDateTime.now().toString()
                     ,evalue       = it.evalue
                     ,deposit      = it.deposit
                     ,onbid_status = it.onbid_status

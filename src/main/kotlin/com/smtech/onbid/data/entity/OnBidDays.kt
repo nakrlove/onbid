@@ -12,8 +12,8 @@ data class OnBidDays(
     @Column(name = "DAYSIDX")
     val daysidx: Int? = null,
 
-    @Column(name = "SDATE")
-    var sdate: String = LocalDateTime.now().toString(),
+//    @Column(name = "SDATE")
+//    var sdate: String = LocalDateTime.now().toString(),
 
     @Column(name = "EDATE")
     var edate: String = LocalDateTime.now().toString(),
@@ -37,5 +37,5 @@ data class OnBidDays(
     @JsonIgnore
     var onBid: OnBid? = null
 ){
-    constructor() : this(daysidx = null, sdate = LocalDateTime.now().toString(), edate = LocalDateTime.now().toString(), null, null,null,null)
+    constructor() : this(daysidx = null,  edate = LocalDateTime.now().toString(), null, null,null,null)
 }

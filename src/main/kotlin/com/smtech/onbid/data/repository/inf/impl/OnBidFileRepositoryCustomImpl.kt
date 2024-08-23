@@ -1,6 +1,5 @@
 package com.smtech.onbid.data.repository.inf.impl
 
-import com.smtech.onbid.data.dto.OnBidDayDTO
 import com.smtech.onbid.data.dto.OnBidFileDTO
 import com.smtech.onbid.data.repository.inf.OnBidFileRepositoryCustom
 import jakarta.persistence.EntityManager

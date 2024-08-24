@@ -40,6 +40,9 @@ import java.time.LocalDateTime
                 ColumnResult(name = "onbid_status"),
                 ColumnResult(name = "status"),
                 ColumnResult(name = "land_classification_name"),
+                ColumnResult(name = "national_land_planning_use_laws"),
+                ColumnResult(name = "other_laws"),
+                ColumnResult(name = "enforcement_decree"),
             ]
         )
     ]
@@ -49,41 +52,42 @@ import java.time.LocalDateTime
     query = """
       WITH closest_dates AS (
                 SELECT
-                    b.bididx,
-                    b.addr1,
-                    b.addr2,
-                    b.it_type,
-                    b.ld_area,
-                    ROUND(b.ld_area * 0.3025, 2) AS ld_area_pyeong,
-                    b.build_area,
-                    ROUND(b.build_area * 0.3025, 2) AS build_area_pyeong,
-                    b.rd_addr,
-                    b.streeaddr2,
-                    b.bruptcy_admin_name,
-                    b.bruptcy_admin_phone,
-                    b.renter,
-                    b.estatetype,
-                    b.disposal_type,
-                    b.note,
-                    b.land_classification,
-                    b.progress_status,
-                   -- DATE_FORMAT(d.sdate, '%Y-%m-%d') AS sdate,
-                    DATE_FORMAT(d.edate, '%Y-%m-%d') AS edate,
-                    FORMAT(d.evalue,0) AS evalue,
-                    FORMAT(d.deposit,0) AS deposit,
-                    d.onbid_status,
-                   -- ABS(DATEDIFF(CURDATE(), d.sdate)) AS sdate_diff,
-                    ABS(DATEDIFF(CURDATE(), d.edate)) AS edate_diff,
-                    ROW_NUMBER() OVER (
-                        PARTITION BY b.bididx
-                                ORDER BY
-                                CASE
-                                WHEN d.onbid_status IN ('039', '040') THEN 0
-                                -- ELSE LEAST(sdate_diff, edate_diff)
-                                ELSE LEAST(edate_diff, edate_diff)
-                                END
-                ) AS rn,
-                c.name as status
+                        b.bididx,
+                        b.addr1,
+                        b.addr2,
+                        b.it_type,
+                        b.ld_area,
+                        ROUND(b.ld_area * 0.3025, 2) AS ld_area_pyeong,
+                        b.build_area,
+                        ROUND(b.build_area * 0.3025, 2) AS build_area_pyeong,
+                        b.rd_addr,
+                        b.streeaddr2,
+                        b.bruptcy_admin_name,
+                        b.bruptcy_admin_phone,
+                        b.renter,
+                        b.estatetype,
+                        b.disposal_type,
+                        b.note,
+                        b.land_classification,
+                        b.progress_status,
+                       -- DATE_FORMAT(d.sdate, '%Y-%m-%d') AS sdate,
+                        DATE_FORMAT(d.edate, '%Y-%m-%d') AS edate,
+                        FORMAT(d.evalue,0) AS evalue,
+                        FORMAT(d.deposit,0) AS deposit,
+                        d.onbid_status,
+                        ABS(DATEDIFF(CURDATE(), d.edate)) AS edate_diff,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY b.bididx
+                                    ORDER BY
+                                    CASE
+                                    WHEN d.onbid_status IN ('039', '040') THEN 0
+                                    ELSE LEAST(edate_diff, edate_diff)
+                                    END
+                    ) AS rn ,
+                    c.name as status ,
+                    b.national_land_planning_use_laws ,
+                    b.other_laws ,
+                    b.enforcement_decree
                 FROM onbid_tb b
                 INNER JOIN onbiddays_tb d ON b.bididx = d.bididx
                 LEFT OUTER JOIN code_tb c ON c.code = d.onbid_status
@@ -92,7 +96,6 @@ import java.time.LocalDateTime
                 SELECT *
                   FROM closest_dates
                  WHERE rn = 1
-           -- AND (onbid_status IN ('039', '040') OR sdate_diff IS NOT NULL) 
             AND (onbid_status IN ('039', '040') OR edate_diff IS NOT NULL)
         ),
         final_selection AS (
@@ -115,12 +118,14 @@ import java.time.LocalDateTime
                 note,
                 land_classification,
                 progress_status,
-              --  sdate,
-                edate,
-                evalue,
-                deposit,
+                edate   ,
+                evalue  ,
+                deposit ,
                 onbid_status,
-                status
+                status  ,
+                national_land_planning_use_laws ,
+                other_laws ,
+                enforcement_decree
             FROM filtered_status
             WHERE rn = 1
         )
@@ -138,20 +143,23 @@ import java.time.LocalDateTime
             f.bruptcy_admin_name,
             f.bruptcy_admin_phone,
             f.renter,
-            f.estatetype,
+            d.name as estatetype,
             f.disposal_type,
             f.note,
             f.land_classification,
             f.progress_status,
-           -- f.sdate,
             f.edate,
             f.evalue,
             f.deposit,
             f.onbid_status,
             f.status,
-            c.name AS land_classification_name
+            c.name AS land_classification_name ,
+            f.national_land_planning_use_laws ,
+            f.other_laws ,
+            f.enforcement_decree
          FROM final_selection f
          LEFT JOIN code_tb c ON c.code COLLATE utf8mb4_unicode_ci = f.land_classification COLLATE utf8mb4_unicode_ci
+         LEFT JOIN code_tb d ON d.code COLLATE utf8mb4_unicode_ci = f.estatetype COLLATE utf8mb4_unicode_ci
         WHERE 1 = 1
           AND (:searchTerm IS NULL OR f.addr1 LIKE CONCAT('%', :searchTerm, '%') OR f.addr2 LIKE CONCAT('%', :searchTerm, '%'))
         ORDER BY f.bididx DESC
@@ -203,7 +211,10 @@ import java.time.LocalDateTime
                     b.land_classification,
                     b.progress_status,
                     b.onbid_status,
-                    b.regdate
+                    b.regdate     ,
+                    b.national_land_planning_use_laws ,
+                    b.other_laws ,
+                    b.enforcement_decree
             FROM onbid_tb b
           )
           select 
@@ -231,7 +242,10 @@ import java.time.LocalDateTime
                 '' as deposit,
                 '' as land_classification_name,
                 d.onbid_status,
-                e.name as status
+                e.name as status ,
+                d.national_land_planning_use_laws ,
+                d.other_laws,
+                d.enforcement_decree
             from onbid_detail d
             left outer join code_tb e ON e.code COLLATE utf8mb4_unicode_ci = d.onbid_status COLLATE utf8mb4_unicode_ci
             where d.bididx = :bididx
@@ -239,6 +253,7 @@ import java.time.LocalDateTime
     resultSetMapping = "OnBidWithDetailsMapping"
 )
 data class OnBid(
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "BIDIDX")
@@ -295,9 +310,17 @@ data class OnBid(
     @Column(name = "ONBID_STATUS", columnDefinition = "VARCHAR")
     var onbid_status: String? = "038",        /* 입찰진행상태(기본값 입찰중) */
 
-
     @Column(name = "DEBTOR", columnDefinition = "VARCHAR")
     var debtor: String? = null,        /* 채무자명 */
+
+    @Column(name = "NATIONAL_LAND_PLANNING_USE_LAWS", columnDefinition = "VARCHAR")
+    var national_land_planning_use_laws: String? = null,        /* 「국토의 계획 및 이용에 관한 법률」에 따른 지역ㆍ지구등 */
+
+    @Column(name = "OTHER_LAWS", columnDefinition = "VARCHAR")
+    var other_laws: String? = null,        /* 다른 법령 등에 따른 지역ㆍ지구등 */
+
+    @Column(name = "ENFORCEMENT_DECREE", columnDefinition = "VARCHAR")
+    var enforcement_decree: String? = null,        /* 시행령 */
 
     @OneToMany(mappedBy = "onMemo", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnore

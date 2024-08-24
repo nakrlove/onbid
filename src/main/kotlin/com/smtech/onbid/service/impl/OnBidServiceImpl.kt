@@ -122,6 +122,10 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler,@Autowired 
             , land_classification = onBidDTO.land_classification
             , progress_status = onBidDTO.progress_status
             , onbid_status =  onBidDTO.onbid_status
+            , debtor =  onBidDTO.debtor
+            , national_land_planning_use_laws = onBidDTO.national_land_planning_use_laws
+            , other_laws = onBidDTO.other_laws
+            , enforcement_decree = onBidDTO.enforcement_decree
         )
 
         /**

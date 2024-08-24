@@ -27,5 +27,7 @@ data class OnBidMapDTO(
     val onbid_status: String?,
     val status: String?,
     val land_classification_name: String?,
-
+    val national_land_planning_use_laws: String?,
+    val other_laws: String?,
+    val enforcement_decree: String?,
 )

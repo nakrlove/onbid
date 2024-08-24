@@ -92,7 +92,7 @@ class OnBidController( @Autowired val onbid: OnBidService,@Autowired val onbidMe
     /*
      * BLOB 컬럼에 파일저장
      */
-    @PostMapping("/onbidL", consumes = ["multipart/form-data"])
+    @PostMapping("/onBidRegist", consumes = ["multipart/form-data"])
     fun onRegistBid( @Valid @RequestPart onbidDTO: OnBidDTO
                  , @RequestParam("additionalFiles") additionalFiles: List<MultipartFile>?/* 파일첨부 */
                  , @RequestParam("additionalFileOptions") options: List<String>?

@@ -25,7 +25,12 @@ data class OnBidDTO(
       , var disposal_type:String?
       , var land_classification: String? = null /* 지목 */
       , var progress_status: String? = null  /* 진행상태 */
-      , var onbid_status: String? = null /* 입찰진행상태 */
+      , var onbid_status   : String? = null /* 입찰진행상태 */
+      , val debtor         : String? /* 채무자명 */
+      , val national_land_planning_use_laws: String?
+      , val other_laws     : String?
+      , val enforcement_decree: String?
+
       , var page: Int = 0
       , var size: Int = 10
 )

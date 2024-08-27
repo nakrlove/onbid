@@ -24,6 +24,9 @@ import org.springframework.web.multipart.MultipartFile
 @RequestMapping(value=["/api/onbid"])
 class OnBidController( @Autowired val onbid: OnBidService,@Autowired val onbidMemo: MemoService) {
 
+    @Value("\${file.upload-dir}")
+    lateinit var uploadDirPath: String
+
 
     @RequestMapping(value=["/onBidDetil"])
     fun onBidDetail( @RequestBody onbidDTO: OnBidDTO ): ResponseEntity<out Any>{
@@ -37,8 +40,6 @@ class OnBidController( @Autowired val onbid: OnBidService,@Autowired val onbidMe
         return ResponseEntity.status(HttpStatus.OK).body(OnBidWrapper(resultOnBid,resultDays,resultMemos))
     }
 
-    @Value("\${file.upload-dir}")
-    lateinit var uploadDirPath: String
 
 
     @PostMapping("/onbidList")

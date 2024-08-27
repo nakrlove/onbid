@@ -1,19 +1,15 @@
 package com.smtech.onbid.data.entity
 
 import jakarta.persistence.*
+import java.math.BigInteger
 
-//zipcode , sido, sido_eng, sigungu,  sigungu_eng , eubmyeon , eubmyeon_eng , dolomyeong_code , dolomyeong
-// , dolomyeong_yeongmun , jihayeobu , geonmulbeonho_bonbeon , geonmulbeonho_bubeon , geonmulgwanlibeonho
-// , dalyang_baedalcheomyeong ,  sigunguyong_geonmulmyeong  ,  beobjeongdong_code  ,  limyeong ,  haengjeongdongmyeong
-// ,  beobjeongdongmyeong , san_yeobu  ,  jibeonbonbeon  ,  eubmyeondong_illyeonbeonho ,  jibeonbubeon ,  gu_upyeonbeonho
-// ,  upyeonbeonhoillyeonbeonho
 @Entity
-@Table(name = "post")
+@Table(name = "zipcode")
 data class Post(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    val id: Int? = null,
+    @Column(name = "building_mgmt_no")
+    val id: BigInteger? = null,
 
 //    @Column(name = "zipcode")
 //    val zipcode: String? = null,  /* 구역번호 */
@@ -71,9 +67,9 @@ data class Post(
 //    val upyeonbeonhoillyeonbeonho: String? = null,  /* 우편번호일련번호 */
 
     @Column(name = "addr1")
-    val addr1: String? = null,  /* 우편번호1 */
+    val addr1: String? = null,/* 우편번호1 */
     @Column(name = "addr2")
-    val addr2: String? = null,  /* 우편번호2 */
+    val addr2: String? = null,/* 우편번호2 */
 
 )
 

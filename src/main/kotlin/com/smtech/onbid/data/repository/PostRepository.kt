@@ -59,45 +59,23 @@ interface PostRepository: JpaRepository<Post,Long> {
      * 주소검색
      */
     @Query(""" 
-          SELECT p.id
-                 , CONCAT_WS
-                        (' ', p.sido, p.sigungu, p.dolomyeong,   
-                          CASE WHEN p.geonmulbeonho_bonbeon IS NOT NULL 
-                                AND p.geonmulbeonho_bubeon = '0' 
-                               THEN p.geonmulbeonho_bonbeon
-                               WHEN p.geonmulbeonho_bonbeon IS NOT NULL 
-                                AND p.geonmulbeonho_bubeon IS NOT NULL 
-                                AND p.geonmulbeonho_bonbeon <> '' 
-                                AND p.geonmulbeonho_bubeon <> '' 
-                               THEN CONCAT(p.geonmulbeonho_bonbeon, '-', p.geonmulbeonho_bubeon) 
-                               ELSE NULL 
-                           END
-                      ,   CASE WHEN  p.beobjeongdong IS NOT NULL 
-                                AND p.sigunguyong_geonmulmyeong IS NOT NULL 
-                                AND p.beobjeongdong <> '' 
-                                AND  p.sigunguyong_geonmulmyeong <> ''
-                               THEN  CONCAT('(', p.beobjeongdong, ',', p.sigunguyong_geonmulmyeong, ')') 
-                               ELSE NULL
-                           END    
-                        ) as addr1                
-                , CONCAT_WS
-                         (' ', p.sido, p.sigungu, p.beobjeongdong,      
-                            CASE WHEN p.jibeonbubeon IS NOT NULL AND p.jibeonbubeon = '0'
-								 THEN p.jibeonbonbeon
-                                 WHEN p.jibeonbonbeon IS NOT NULL 
-                                  AND p.jibeonbubeon IS NOT NULL 
-                                  AND p.jibeonbonbeon <> '' 
-                                  AND p.jibeonbubeon <> '' 
-                                 THEN CONCAT(p.jibeonbonbeon, '-', p.jibeonbubeon) 
-                                 ELSE NULL 
-                             END
-                         ) as addr2       
-            FROM post p     
-           WHERE ( 
-                    CONCAT_WS(' ', p.sigungu, p.beobjeongdong, CONCAT(p.jibeonbonbeon, '-', p.jibeonbubeon)) LIKE %:search% 
-                 or CONCAT_WS(' ', p.sigungu, p.dolomyeong, CONCAT(p.jibeonbonbeon, '-', p.jibeonbubeon))     LIKE %:search%
-                 )
-            limit :totalPage  , 10
+            select  building_mgmt_no
+                  , concat(concat_ws(' ',city_kr,country_kr,town_kr,dong,concat(gibun_no,'-',gibun_subno))
+                  , ' '
+                  , CASE 
+				    WHEN building_nm IS NOT NULL AND building_nm <> '' THEN concat('(', building_nm, ')')
+				    ELSE ''
+                     END) AS addr2 
+			      , concat_ws(' ',city_kr,country_kr,road_kr,concat(building_no,'-',building_subno)
+                  ,' ' 
+                  , CASE 
+				    WHEN building_nm IS NOT NULL AND building_nm <> '' THEN concat('(',legal_nm_kr,',', building_nm, ')')
+                    ELSE ''
+				     END ) AS addr1
+         from zipcode
+		where concat_ws(' ',city_kr,country_kr,legal_nm_kr,concat(gibun_no,'-',gibun_subno)) like %:search% 
+        limit :totalPage  , 10
+            
     """, nativeQuery = true
     )
     fun findBySigunguLikeDolomyeongLikeBeobjeongdongmyeong(
@@ -105,14 +83,19 @@ interface PostRepository: JpaRepository<Post,Long> {
         @Param(value = "totalPage") totalPage: Long
     ): List<Post>
 
+    //         SELECT count(*)
+//         FROM  post p
+//        WHERE (
+//                    CONCAT_WS(' ', p.sigungu, p.beobjeongdong, CONCAT(p.jibeonbonbeon, '-', p.jibeonbubeon)) LIKE %:search%
+//                 or CONCAT_WS(' ', p.sigungu, p.dolomyeong, CONCAT(p.jibeonbonbeon, '-', p.jibeonbubeon))     LIKE %:search%
+//                 )
+//
 
     @Query(""" 
-         SELECT count(*) 
-         FROM  post p
-        WHERE ( 
-                    CONCAT_WS(' ', p.sigungu, p.beobjeongdong, CONCAT(p.jibeonbonbeon, '-', p.jibeonbubeon)) LIKE %:search% 
-                 or CONCAT_WS(' ', p.sigungu, p.dolomyeong, CONCAT(p.jibeonbonbeon, '-', p.jibeonbubeon))     LIKE %:search%
-                 )
+        select count(*)
+         from zipcode
+		where concat_ws(' ',city_kr,country_kr,legal_nm_kr,concat(gibun_no,'-',gibun_subno)) like %:search%         
+                 
     """, nativeQuery = true
     )
     fun findByCount(  @Param(value = "search") search: String): Long

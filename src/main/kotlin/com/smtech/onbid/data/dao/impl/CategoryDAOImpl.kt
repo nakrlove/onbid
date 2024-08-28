@@ -3,6 +3,7 @@ package com.smtech.onbid.data.dao.impl
 import com.smtech.onbid.data.dao.CategoryDAO
 import com.smtech.onbid.data.entity.Category
 import com.smtech.onbid.data.repository.CategroyRepository
+import com.smtech.onbid.exception.DuplicateCategoryException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -41,7 +42,7 @@ class CategoryDAOImpl( @Value("\${smtech.com.user.key}") val userKey: String,@Au
         val existingCategory: Optional<Category> = categoryRepository.findByUserAndContent(userKey, category?.content!!)
         return if (existingCategory.isPresent) {
             // 조회된 결과가 있으면 예외를 던짐
-            throw Exception("이미 관심목록이 존재합니다.")
+            throw DuplicateCategoryException("이미 관심목록이 존재합니다.")
         } else {
             category.user = userKey
             // 조회된 결과가 없으면 새로 등록

@@ -54,8 +54,8 @@ class OnBidController( @Autowired val onbid: OnBidService,@Autowired val onbidMe
         return ResponseEntity.status(HttpStatus.OK).body(result)
     }
 
-    @PostMapping("/onbidAllList")
-    fun onBidAllList( @RequestBody onbidDTO: OnBidDTO): ResponseEntity<out Any>{
+    @PostMapping("/onbid-alls")
+    fun onBidAlls( @RequestBody onbidDTO: OnBidDTO): ResponseEntity<out Any>{
         /* 조회를 역순으로 정렬요청 */
 //        val sort = Sort.by(Sort.Order.desc("bididx"))
         /* 페이지 요청 */

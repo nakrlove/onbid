@@ -10,6 +10,6 @@ interface OnBidDataHandler {
     fun findDetail(onBid: OnBid): OnBidMapDTO?
     fun findAlls(page: PageRequest): Page<OnBid>?
     /** 목록조회*/
-    fun findOnBidLists(searchTerm: String?, limit: Int, offset: Int): List<OnBidMapDTO>
-    fun countOnBidWithDetails(searchTerm: String?): Long
+    fun findOnBidLists(searchTerm: Int?, limit: Int, offset: Int): List<OnBidMapDTO>
+//    fun countOnBidWithDetails(searchTerm: String?): Long
 }

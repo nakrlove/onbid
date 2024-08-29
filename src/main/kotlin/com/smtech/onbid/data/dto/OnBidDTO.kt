@@ -20,7 +20,9 @@ data class OnBidDTO(
       , var memo: String? /* 메모 주소 */
       , var renter:String? /* 임차여부 */
       , var ld_area: String? /* 토지 */
+      , var ld_area_memo: String?   /* 토지면적 메모*/
       , var build_area: String? /* 건축물 */
+      , var build_area_memo: String? /* 건축물 메모*/
       , var estateType:String?  /* 부동산종류 */
       , var disposal_type:String?
       , var land_classification: String? = null /* 지목 */
@@ -30,7 +32,7 @@ data class OnBidDTO(
       , val national_land_planning_use_laws: String?
       , val other_laws     : String?
       , val enforcement_decree: String?
-
+      , val idx: Int? /* 관심종목 */
       , var page: Int = 0
       , var size: Int = 10
 )

@@ -29,11 +29,11 @@ class OnBidDataHandlerImpl(@Autowired val onBidDAO: OnBidDAO):OnBidDataHandler {
         return onBidDAO.findAlls(page)
     }
 
-    override fun findOnBidLists(searchTerm: String?, limit: Int, offset: Int): List<OnBidMapDTO> {
+    override fun findOnBidLists(searchTerm: Int?, limit: Int, offset: Int): List<OnBidMapDTO> {
         return onBidDAO.findOnBidLists(searchTerm,limit,offset)
     }
 
-    override fun countOnBidWithDetails(searchTerm: String?): Long {
-        return onBidDAO.countOnBidWithDetails(searchTerm)
-    }
+//    override fun countOnBidWithDetails(searchTerm: String?): Long {
+//        return onBidDAO.countOnBidWithDetails(searchTerm)
+//    }
 }

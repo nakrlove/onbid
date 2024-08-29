@@ -1,7 +1,6 @@
 package com.smtech.onbid.data.entity
 
 import jakarta.persistence.*
-import org.springframework.beans.factory.annotation.Value
 import java.time.LocalDateTime
 
 @Entity
@@ -16,9 +15,14 @@ data class Category(@Id
                     @Column(name = "USER", columnDefinition = "VARCHAR")
                     var user: String? = null,
 
-                    @Column(name = "REGDATE", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
-                    var regdate: LocalDateTime = LocalDateTime.now(),
+//                    @Column(name = "REGDATE", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+                    @Column(name = "REGDATE")
+                    var regdate: String?,
+
+                    @Column(name = "BIDIDX")
+                    var bididx: Int? ,
     ){
     // 기본 생성자
-    constructor() : this(null, null, null, LocalDateTime.now())
+    constructor() : this(idx =null, content = null, user = null, regdate = LocalDateTime.now().toString(),bididx = null)
+    constructor(content: String?, user: String?) : this(idx =null, content = null, user = null, regdate = LocalDateTime.now().toString(),bididx = null)
 }

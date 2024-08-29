@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service
 class OnBidDAOImpl(@Autowired val onbidDRepository: OnBidRepository):OnBidDAO {
 
     val  LOGGER: Logger = LoggerFactory.getLogger(this.javaClass)
+
     override fun saveOnBid(onBid: OnBid): OnBid {
         onbidDRepository.save(onBid)
         return onBid
@@ -32,11 +33,11 @@ class OnBidDAOImpl(@Autowired val onbidDRepository: OnBidRepository):OnBidDAO {
     }
 
     /** 목록조회 */
-    override fun findOnBidLists(searchTerm: String?, limit: Int, offset: Int): List<OnBidMapDTO> {
+    override fun findOnBidLists(searchTerm: Int?, limit: Int, offset: Int): List<OnBidMapDTO> {
         return onbidDRepository.findOnBidLists(searchTerm,limit,offset)
     }
 
-    override fun countOnBidWithDetails(searchTerm: String?): Long {
-        return onbidDRepository.countOnBidWithDetails(searchTerm)
+    override fun findOnBidCount(searchTerm: Int?): Long {
+        return onbidDRepository.findOnBidCount(searchTerm)
     }
 }

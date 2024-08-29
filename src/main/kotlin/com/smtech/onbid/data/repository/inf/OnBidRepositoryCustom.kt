@@ -5,8 +5,8 @@ import com.smtech.onbid.data.dto.OnBidMapDTO
 
 interface OnBidRepositoryCustom {
     /** 목록조회 */
-    fun findOnBidLists(searchTerm: String?, limit: Int, offset: Int): List<OnBidMapDTO>
-    fun countOnBidWithDetails(searchTerm: String?): Long
+    fun findOnBidLists(searchTerm: Int?, limit: Int, offset: Int): List<OnBidMapDTO>
+    fun findOnBidCount(searchTerm: Int?): Long
 
     fun onBidDetails(bididx: Int):OnBidMapDTO
 

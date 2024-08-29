@@ -30,4 +30,5 @@ data class OnBidMapDTO(
     val national_land_planning_use_laws: String?,
     val other_laws: String?,
     val enforcement_decree: String?,
+    val idx: Int?,
 )

@@ -1,5 +1,6 @@
 package com.smtech.onbid.service.impl
 
+import com.smtech.onbid.data.dao.OnBidDAO
 import com.smtech.onbid.data.dto.OnBidDTO
 import com.smtech.onbid.data.dto.OnBidDayDTO
 import com.smtech.onbid.data.dto.OnBidMapDTO
@@ -17,7 +18,7 @@ import java.io.File
 import java.time.LocalDateTime
 
 @Service
-class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler,@Autowired val onbidRepository: OnBidRepository,@Autowired val onBidDaysRepository: OnBidDaysRepository): OnBidService{
+class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDAO ,@Autowired val onbidRepository: OnBidRepository,@Autowired val onBidDaysRepository: OnBidDaysRepository): OnBidService{
 
 
     override fun findDetail( onBid: OnBidDTO ):OnBidMapDTO? {
@@ -29,6 +30,7 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler,@Autowired 
     }
 
     override fun findAll(onBid: OnBidDTO, page: PageRequest): BidWrapper {
+
         val data = OnBid( addr1 = onBid.addr1
             , addr2 = onBid.detailAddress
             , rd_addr = onBid.rd_addr
@@ -37,18 +39,19 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler,@Autowired 
         )
 
         val count = onbidRepository.count()
-        println("(@) ====== findAll =count [${count}]")
         val resultList =  onBidHandler.findAlls(page)
+
+
         println("(@) ====== findAll =count [${count}]")
         return BidWrapper(count,resultList)
     }
 
-    override fun findOnBidLists(searchTerm: String?, limit: Int, offset: Int): List<OnBidMapDTO> {
+    override fun findOnBidLists(searchTerm: Int?, limit: Int, offset: Int): List<OnBidMapDTO> {
         return onBidHandler.findOnBidLists(searchTerm,limit,offset)
     }
 
-    override fun countOnBidWithDetails(searchTerm: String?): Long {
-        return onBidHandler.countOnBidWithDetails(searchTerm)
+    override fun findOnBidCount(searchTerm: Int?): Long {
+        return onBidHandler.findOnBidCount(searchTerm)
     }
 
 
@@ -115,7 +118,9 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler,@Autowired 
             , bruptcy_admin_phone = onBidDTO.bruptcy_admin_phone
             , renter = onBidDTO.renter
             , ld_area = onBidDTO.ld_area
+            , ld_area_memo = onBidDTO.ld_area_memo      //토지면적 메모
             , build_area = onBidDTO.build_area
+            , build_area_memo = onBidDTO.build_area_memo //건물면적 메모
             , estateType = onBidDTO.estateType
             , disposal_type = onBidDTO.disposal_type
             , note = onBidDTO.note
@@ -126,7 +131,9 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler,@Autowired 
             , national_land_planning_use_laws = onBidDTO.national_land_planning_use_laws
             , other_laws = onBidDTO.other_laws
             , enforcement_decree = onBidDTO.enforcement_decree
+            , idx = onBidDTO.idx  //관심종목
         )
+
 
         /**
          * 입찰일자 / 감정가/보증금 등록
@@ -182,7 +189,8 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler,@Autowired 
        //================================================//
 
         /* 기본정보 저장 */
-        return onBidHandler.saveOnBidEntity(onbid)
+//        return onBidHandler.saveOnBidEntity(onbid)
+        return onBidHandler.saveOnBid(onbid)
     }
 
     override fun saveOnBid(onBidDTO: OnBidDTO, file: File?, additionalFiles: List<File>?): OnBid {
@@ -191,7 +199,8 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDataHandler,@Autowired 
         val onbid  = OnBid(
             addr1 = onBidDTO.addr1,
             addr2 = onBidDTO.detailAddress, bruptcy_admin_name = onBidDTO.bruptcy_admin_name, bruptcy_admin_phone = onBidDTO.bruptcy_admin_phone)
-        return onBidHandler.saveOnBidEntity(onbid)
+//        return onBidHandler.saveOnBidEntity(onbid)
+        return onBidHandler.saveOnBid(onbid)
     }
 }
 

@@ -14,18 +14,18 @@ import org.springframework.web.bind.annotation.*
  * 관심목록
  */
 @RestController
-@RequestMapping(value=["/api/onbid"])
+@RequestMapping(value = ["/api/onbid"])
 class CategroyController(@Autowired val categoryService: CategoryService) {
 
     /*
      * 관심목록 조회
      */
     @PostMapping("/categroyList")
-    fun cateGoryList(@RequestBody categoryDTO: CategoryDTO?): ResponseEntity<out Any>{
+    fun getCategoryList(@RequestBody categoryDTO: CategoryDTO?): ResponseEntity<out Any> {
 
         println("============= CategoryDTO =============")
         val category: Category? = Category(content = categoryDTO?.content, user = categoryDTO?.user)
-        val result =  categoryService.cateGoryList(category?.content)
+        val result = categoryService.cateGoryList(category?.content)
 
         return ResponseEntity.status(HttpStatus.OK).body(result)
     }
@@ -34,23 +34,22 @@ class CategroyController(@Autowired val categoryService: CategoryService) {
      * 관심목록 저장
      */
     @PostMapping("/categroySave")
-    fun cateGroySave(@RequestBody categoryDTO: CategoryDTO?): ResponseEntity<out Any>{
-        val category: Category? = Category(content = categoryDTO?.content)
+    fun cateGroySave(@RequestBody categoryDTO: CategoryDTO?): ResponseEntity<out Any> {
+        val category: Category? = Category(content = categoryDTO?.content, user = categoryDTO?.user)
 //        val category: Category? = Category(content = categoryDTO?.content, user = categoryDTO?.user)
-        val result = category?.let{ categoryService.cateGroySave(category) } ?: null
+        val result = category?.let { categoryService.cateGroySave(category) } ?: null
         return ResponseEntity.status(HttpStatus.OK).body(result)
     }
-
 
 
     /**
      * 관심목록 수정
      */
     @PostMapping("/categroyUpdate")
-    fun cateGroyUpdate(@RequestBody categoryDTO: CategoryDTO): ResponseEntity<out Any>{
+    fun cateGroyUpdate(@RequestBody categoryDTO: CategoryDTO): ResponseEntity<out Any> {
 
         val category: Category? = Category(content = categoryDTO.content, user = categoryDTO.user)
-        val result = category?.let{  categoryService.cateGroyUpdate(category) }
+        val result = category?.let { categoryService.cateGroyUpdate(category) }
         return ResponseEntity.status(HttpStatus.OK).body(result)
     }
 
@@ -58,7 +57,7 @@ class CategroyController(@Autowired val categoryService: CategoryService) {
      * 관심목록 삭제
      */
     @PostMapping("/categroyDelete")
-    fun cateGroyDelete(@RequestBody categoryDTO: CategoryDTO):ResponseEntity<out Any>{
+    fun cateGroyDelete(@RequestBody categoryDTO: CategoryDTO): ResponseEntity<out Any> {
         val result = categoryService.cateGroyDelete(categoryDTO?.idx!!)
         return ResponseEntity.status(HttpStatus.OK).body(result)
     }

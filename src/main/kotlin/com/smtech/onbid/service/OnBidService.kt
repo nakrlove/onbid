@@ -18,9 +18,9 @@ interface OnBidService {
     fun findAll(onBid: OnBidDTO,page: PageRequest): BidWrapper
 
     /** 목록조회 */
-    fun findOnBidLists(searchTerm: String?, limit: Int, offset: Int): List<OnBidMapDTO>
+    fun findOnBidLists(searchTerm: Int?, limit: Int, offset: Int): List<OnBidMapDTO>
 
-    fun countOnBidWithDetails(searchTerm: String?): Long
+    fun findOnBidCount(searchTerm: Int?): Long
 
 
     fun findDetail(onBid: OnBidDTO ):OnBidMapDTO?

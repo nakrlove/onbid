@@ -60,8 +60,8 @@ class OnBidController( @Autowired val onbid: OnBidService,@Autowired val onbidMe
 //        val sort = Sort.by(Sort.Order.desc("bididx"))
         /* 페이지 요청 */
 //        val pageable = PageRequest.of(onbidDTO.page, onbidDTO.size,sort)
-        val count = onbid.countOnBidWithDetails("")
-        val result = onbid.findOnBidLists("",onbidDTO.page,onbidDTO.size)
+        val count = onbid.findOnBidCount(onbidDTO.idx)
+        val result = onbid.findOnBidLists(onbidDTO.idx,onbidDTO.page,onbidDTO.size)
         println(" pageable = [${result}]")
         val bidResult = BidAllWrapper(count,result)
         return ResponseEntity.status(HttpStatus.OK).body(bidResult)

@@ -43,6 +43,7 @@ import java.time.LocalDateTime
                 ColumnResult(name = "national_land_planning_use_laws"),
                 ColumnResult(name = "other_laws"),
                 ColumnResult(name = "enforcement_decree"),
+                ColumnResult(name = "idx"),
             ]
         )
     ]
@@ -87,7 +88,8 @@ import java.time.LocalDateTime
                     c.name as status ,
                     b.national_land_planning_use_laws ,
                     b.other_laws ,
-                    b.enforcement_decree
+                    b.enforcement_decree ,
+                    b.idx
                 FROM onbid_tb b
                 INNER JOIN onbiddays_tb d ON b.bididx = d.bididx
                 LEFT OUTER JOIN code_tb c ON c.code = d.onbid_status
@@ -125,7 +127,8 @@ import java.time.LocalDateTime
                 status  ,
                 national_land_planning_use_laws ,
                 other_laws ,
-                enforcement_decree
+                enforcement_decree ,
+                idx
             FROM filtered_status
             WHERE rn = 1
         )
@@ -156,35 +159,41 @@ import java.time.LocalDateTime
             c.name AS land_classification_name ,
             f.national_land_planning_use_laws ,
             f.other_laws ,
-            f.enforcement_decree
+            f.enforcement_decree ,
+            f.idx
          FROM final_selection f
          LEFT JOIN code_tb c ON c.code COLLATE utf8mb4_unicode_ci = f.land_classification COLLATE utf8mb4_unicode_ci
          LEFT JOIN code_tb d ON d.code COLLATE utf8mb4_unicode_ci = f.estatetype COLLATE utf8mb4_unicode_ci
-        WHERE 1 = 1
-          AND (:searchTerm IS NULL OR f.addr1 LIKE CONCAT('%', :searchTerm, '%') OR f.addr2 LIKE CONCAT('%', :searchTerm, '%'))
+        WHERE (:searchTerm = 0 OR f.idx = :searchTerm )
         ORDER BY f.bididx DESC
         LIMIT :limit , :offset
     """,
     resultSetMapping = "OnBidWithDetailsMapping"
 )
-@NamedNativeQuery(
-    name = "countOnBidWithDetails",/* 전체카운터 */
-    query = """
-        WITH onbiddate AS (
-            SELECT 
+
+
+/* 문제가 되어 기록해둠
+     WITH onbiddate AS (
+            SELECT
                 bididx,
                 ROW_NUMBER() OVER (
                     PARTITION BY bididx
-                    ORDER BY 
+                    ORDER BY
                         LEAST(ABS(DATEDIFF(CURDATE(), sdate)), ABS(DATEDIFF(CURDATE(), edate)))
                 ) AS rn
             FROM onbiddays_tb
-        ) 
+        )
         SELECT COUNT(*)
         FROM onbid_tb b
         INNER JOIN onbiddate d ON d.bididx = b.bididx
-        WHERE d.rn = 1
-          AND (:searchTerm IS NULL OR b.addr1 LIKE CONCAT('%', :searchTerm, '%') OR b.addr2 LIKE CONCAT('%', :searchTerm, '%'))
+        WHERE (:searchTerm = 0 OR b.idx = :searchTerm )
+ */
+@NamedNativeQuery(
+    name = "countOnBidWithDetails",/* 전체카운터 */
+    query = """
+        SELECT COUNT(*)
+        FROM onbid_tb b
+        WHERE (:searchTerm = 0 OR b.idx = :searchTerm )
     """
 )
 @NamedNativeQuery(
@@ -214,7 +223,8 @@ import java.time.LocalDateTime
                     b.regdate     ,
                     b.national_land_planning_use_laws ,
                     b.other_laws ,
-                    b.enforcement_decree
+                    b.enforcement_decree ,
+                    b.idx
             FROM onbid_tb b
           )
           select 
@@ -245,7 +255,8 @@ import java.time.LocalDateTime
                 e.name as status ,
                 d.national_land_planning_use_laws ,
                 d.other_laws,
-                d.enforcement_decree
+                d.enforcement_decree ,
+                d.idx
             from onbid_detail d
             left outer join code_tb e ON e.code COLLATE utf8mb4_unicode_ci = d.onbid_status COLLATE utf8mb4_unicode_ci
             where d.bididx = :bididx
@@ -273,9 +284,13 @@ data class OnBid(
 
     @Column(name = "LD_AREA", columnDefinition = "VARCHAR")
     var ld_area: String? = null,   /* 토지면적 */
+    @Column(name = "LD_AREA_MEMO", columnDefinition = "VARCHAR")
+    var ld_area_memo: String? = null,   /* 토지면적 메모*/
 
     @Column(name = "BUILD_AREA", columnDefinition = "VARCHAR")
     var build_area: String? = null, /* 건물면적 */
+    @Column(name = "BUILD_AREA_MEMO", columnDefinition = "VARCHAR")
+    var build_area_memo: String? = null, /* 건물면적 메모*/
 
     @Column(name = "RD_ADDR", columnDefinition = "TEXT")
     var rd_addr: String? = null, /* 도로명주소1 */
@@ -321,6 +336,10 @@ data class OnBid(
 
     @Column(name = "ENFORCEMENT_DECREE", columnDefinition = "VARCHAR")
     var enforcement_decree: String? = null,        /* 시행령 */
+
+    @Column(name = "IDX", columnDefinition = "INT")
+    var idx: Int? = null,        /* 관심종목 */
+
 
     @OneToMany(mappedBy = "onMemo", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonIgnore

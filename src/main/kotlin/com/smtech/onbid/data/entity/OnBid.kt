@@ -20,8 +20,10 @@ import java.time.LocalDateTime
                 ColumnResult(name = "addr2"),
                 ColumnResult(name = "it_type"),
                 ColumnResult(name = "ld_area"),
+                ColumnResult(name = "ld_area_memo"),
                 ColumnResult(name = "ld_area_pyeong"),
                 ColumnResult(name = "build_area"),
+                ColumnResult(name = "build_area_memo"),
                 ColumnResult(name = "build_area_pyeong"),
                 ColumnResult(name = "rd_addr"),
                 ColumnResult(name = "streeaddr2"),
@@ -44,6 +46,7 @@ import java.time.LocalDateTime
                 ColumnResult(name = "other_laws"),
                 ColumnResult(name = "enforcement_decree"),
                 ColumnResult(name = "idx"),
+                ColumnResult(name = "debtor"),
             ]
         )
     ]
@@ -58,8 +61,10 @@ import java.time.LocalDateTime
                         b.addr2,
                         b.it_type,
                         b.ld_area,
+                        b.ld_area_memo,
                         ROUND(b.ld_area * 0.3025, 2) AS ld_area_pyeong,
                         b.build_area,
+                        b.build_area_memo,
                         ROUND(b.build_area * 0.3025, 2) AS build_area_pyeong,
                         b.rd_addr,
                         b.streeaddr2,
@@ -89,7 +94,8 @@ import java.time.LocalDateTime
                     b.national_land_planning_use_laws ,
                     b.other_laws ,
                     b.enforcement_decree ,
-                    b.idx
+                    b.idx ,
+                    b.debtor
                 FROM onbid_tb b
                 INNER JOIN onbiddays_tb d ON b.bididx = d.bididx
                 LEFT OUTER JOIN code_tb c ON c.code = d.onbid_status
@@ -107,8 +113,10 @@ import java.time.LocalDateTime
                 addr2,
                 it_type,
                 ld_area,
+                ld_area_memo,
                 ld_area_pyeong,
                 build_area,
+                build_area_memo,
                 build_area_pyeong,
                 rd_addr,
                 streeaddr2,
@@ -128,7 +136,8 @@ import java.time.LocalDateTime
                 national_land_planning_use_laws ,
                 other_laws ,
                 enforcement_decree ,
-                idx
+                idx ,
+                debtor
             FROM filtered_status
             WHERE rn = 1
         )
@@ -138,8 +147,10 @@ import java.time.LocalDateTime
             f.addr2,
             f.it_type,
             f.ld_area,
+            f.ld_area_memo,
             f.ld_area_pyeong,
             f.build_area,
+            f.build_area_memo,
             f.build_area_pyeong,
             f.rd_addr,
             f.streeaddr2,
@@ -160,7 +171,8 @@ import java.time.LocalDateTime
             f.national_land_planning_use_laws ,
             f.other_laws ,
             f.enforcement_decree ,
-            f.idx
+            f.idx ,
+            f.debtor
          FROM final_selection f
          LEFT JOIN code_tb c ON c.code COLLATE utf8mb4_unicode_ci = f.land_classification COLLATE utf8mb4_unicode_ci
          LEFT JOIN code_tb d ON d.code COLLATE utf8mb4_unicode_ci = f.estatetype COLLATE utf8mb4_unicode_ci
@@ -206,8 +218,10 @@ import java.time.LocalDateTime
                     b.addr2,
                     b.it_type,
                     b.ld_area,
+                    b.ld_area_memo,
                     ROUND(b.ld_area * 0.3025, 2) AS ld_area_pyeong,
                     b.build_area,
+                    b.build_area_memo,
                     ROUND(b.build_area * 0.3025, 2) AS build_area_pyeong,
                     b.rd_addr,
                     b.streeaddr2,
@@ -224,7 +238,8 @@ import java.time.LocalDateTime
                     b.national_land_planning_use_laws ,
                     b.other_laws ,
                     b.enforcement_decree ,
-                    b.idx
+                    b.idx ,
+                    b.debtor
             FROM onbid_tb b
           )
           select 
@@ -233,8 +248,10 @@ import java.time.LocalDateTime
                 d.addr2,
                 d.it_type,
                 d.ld_area,
+                d.ld_area_memo,
                 d.ld_area_pyeong,
                 d.build_area,
+                d.build_area_memo,
                 d.build_area_pyeong,
                 d.rd_addr,
                 d.streeaddr2,
@@ -256,7 +273,8 @@ import java.time.LocalDateTime
                 d.national_land_planning_use_laws ,
                 d.other_laws,
                 d.enforcement_decree ,
-                d.idx
+                d.idx ,
+                d.debtor
             from onbid_detail d
             left outer join code_tb e ON e.code COLLATE utf8mb4_unicode_ci = d.onbid_status COLLATE utf8mb4_unicode_ci
             where d.bididx = :bididx

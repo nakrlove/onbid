@@ -28,7 +28,7 @@ class OnBidController( @Autowired val onbid: OnBidService,@Autowired val onbidMe
     lateinit var uploadDirPath: String
 
 
-    @RequestMapping(value=["/onBidDetil"])
+    @RequestMapping(value=["/onbid-detail"])
     fun onBidDetail( @RequestBody onbidDTO: OnBidDTO ): ResponseEntity<out Any>{
         println("================onbidLDetil=============")
         /* 상세조회 */

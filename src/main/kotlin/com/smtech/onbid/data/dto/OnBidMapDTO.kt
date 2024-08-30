@@ -7,8 +7,10 @@ data class OnBidMapDTO(
     val addr2: String?,
     val it_type: String?,
     val ld_area: String?,
+    val ld_area_memo: String?,
     val ld_area_pyeong: Double?,
     val build_area: String?,
+    val build_area_memo: String?,
     val build_area_pyeong: Double?,
     val rd_addr: String?,
     val streeaddr2: String?,
@@ -31,4 +33,5 @@ data class OnBidMapDTO(
     val other_laws: String?,
     val enforcement_decree: String?,
     val idx: Int?,
+    val debtor: String?,
 )

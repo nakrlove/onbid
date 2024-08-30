@@ -12,7 +12,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.web.bind.annotation.*
 import java.net.URLEncoder
 
-data class BidRequest(val bididx: Int)
+data class BidRequest(val bididx: Int,val modify:Boolean)
 
 @RestController
 @RequestMapping(value=["/api/onbid"])

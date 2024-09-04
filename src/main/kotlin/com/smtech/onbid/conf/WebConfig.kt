@@ -13,7 +13,11 @@ class WebConfig : WebMvcConfigurer {
         registry.addMapping("/**")
             .allowedOrigins("http://localhost:3000")
 //            .allowedMethods("*")
-            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+//            .allowedHeaders("Content-Type, Authorization")
+//        headers.add("Access-Control-Allow-Origin", "*");
+//        headers.add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+//        headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization");
     }
 
 

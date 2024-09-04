@@ -1,6 +1,6 @@
 package com.smtech.onbid.data.entity
 
-import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonManagedReference
 import com.smtech.onbid.data.dto.OnBidMapDTO
 import jakarta.persistence.*
@@ -8,6 +8,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "onbid_tb")
+@EntityListeners(OnBidListener::class)
 @SqlResultSetMapping(
     name = "OnBidWithDetailsMapping",
     classes = [
@@ -234,7 +235,7 @@ import java.time.LocalDateTime
                     b.land_classification,
                     b.progress_status,
                     b.onbid_status,
-                    b.regdate     ,
+                    DATE_FORMAT(b.regdate, '%Y-%m-%d %H:%i:%s') regdate     ,
                     b.national_land_planning_use_laws ,
                     b.other_laws ,
                     b.enforcement_decree ,
@@ -295,29 +296,30 @@ data class OnBid(
     var addr2: String? = null,
 
     @Column(name = "REGDATE", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") // 원하는 형식으로 변경
     var regdate: LocalDateTime? = LocalDateTime.now(),
 
     @Column(name = "IT_TYPE", columnDefinition = "VARCHAR")
-    var items: String? = null,    /* 물건구분 */
+    var items: String? = null,                 /* 물건구분 */
 
     @Column(name = "LD_AREA", columnDefinition = "VARCHAR")
-    var ld_area: String? = null,   /* 토지면적 */
+    var ld_area: String? = null,              /* 토지면적 */
     @Column(name = "LD_AREA_MEMO", columnDefinition = "VARCHAR")
-    var ld_area_memo: String? = null,   /* 토지면적 메모*/
+    var ld_area_memo: String? = null,         /* 토지면적 메모*/
 
     @Column(name = "BUILD_AREA", columnDefinition = "VARCHAR")
-    var build_area: String? = null, /* 건물면적 */
+    var build_area: String? = null,           /* 건물면적 */
     @Column(name = "BUILD_AREA_MEMO", columnDefinition = "VARCHAR")
-    var build_area_memo: String? = null, /* 건물면적 메모*/
+    var build_area_memo: String? = null,      /* 건물면적 메모*/
 
     @Column(name = "RD_ADDR", columnDefinition = "TEXT")
-    var rd_addr: String? = null, /* 도로명주소1 */
+    var rd_addr: String? = null,              /* 도로명주소1 */
 
     @Column(name = "STREEADDR2", columnDefinition = "TEXT")
-    var streeaddr2: String? = null, /* 도로명주소2 */
+    var streeaddr2: String? = null,           /* 도로명주소2 */
 
     @Column(name = "BRUPTCY_ADMIN_NAME", columnDefinition = "VARCHAR")
-    var bruptcy_admin_name: String? = null,  /* 파산관제인전화번호 */
+    var bruptcy_admin_name: String? = null,   /* 파산관제인전화번호 */
 
     @Column(name = "BRUPTCY_ADMIN_PHONE", columnDefinition = "VARCHAR")
     var bruptcy_admin_phone: String? = null,
@@ -344,41 +346,46 @@ data class OnBid(
     var onbid_status: String? = "038",        /* 입찰진행상태(기본값 입찰중) */
 
     @Column(name = "DEBTOR", columnDefinition = "VARCHAR")
-    var debtor: String? = null,        /* 채무자명 */
+    var debtor: String? = null,               /* 채무자명 */
 
     @Column(name = "NATIONAL_LAND_PLANNING_USE_LAWS", columnDefinition = "VARCHAR")
-    var national_land_planning_use_laws: String? = null,        /* 「국토의 계획 및 이용에 관한 법률」에 따른 지역ㆍ지구등 */
+    var national_land_planning_use_laws: String? = null,    /* 「국토의 계획 및 이용에 관한 법률」에 따른 지역ㆍ지구등 */
 
     @Column(name = "OTHER_LAWS", columnDefinition = "VARCHAR")
-    var other_laws: String? = null,        /* 다른 법령 등에 따른 지역ㆍ지구등 */
+    var other_laws: String? = null,                         /* 다른 법령 등에 따른 지역ㆍ지구등 */
 
     @Column(name = "ENFORCEMENT_DECREE", columnDefinition = "VARCHAR")
-    var enforcement_decree: String? = null,        /* 시행령 */
+    var enforcement_decree: String? = null,                 /* 시행령 */
 
     @Column(name = "IDX", columnDefinition = "INT")
-    var idx: Int? = null,        /* 관심종목 */
-
+    var idx: Int? = null,                                   /* 관심종목 */
 
     @OneToMany(mappedBy = "onMemo", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonIgnore
-    var onMemo: MutableList<Memos> = mutableListOf(),
+//    @JsonIgnore
+    @JsonManagedReference
+    var onMemo: MutableList<Memos>? = mutableListOf(),
 
     @OneToMany(mappedBy = "onBid", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     var onBidDays: MutableList<OnBidDays> = mutableListOf(),
 
     @OneToMany(mappedBy = "onBidFiles", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonIgnore
+//    @JsonIgnore
+    @JsonManagedReference
     var onBidFiles: MutableList<OnBidFile>? = mutableListOf()
 ) {
+
+    override fun toString(): String {
+        return "OnBid(bididx=$bididx, addr1=$addr1, addr2=$addr2, regdate=$regdate, items=$items, ld_area=$ld_area, build_area=$build_area, rd_addr=$rd_addr, streeaddr2=$streeaddr2, bruptcy_admin_name=$bruptcy_admin_name, bruptcy_admin_phone=$bruptcy_admin_phone, renter=$renter, estateType=$estateType, disposal_type=$disposal_type, note=$note, land_classification=$land_classification, progress_status=$progress_status, onbid_status=$onbid_status, debtor=$debtor, national_land_planning_use_laws=$national_land_planning_use_laws, other_laws=$other_laws, enforcement_decree=$enforcement_decree, idx=$idx)"
+    }
     fun addOnBidFiles(onBidFile: OnBidFile) {
         onBidFiles?.add(onBidFile)
-        onBidFile.onBidFiles = this
+        onBidFile?.onBidFiles = this
     }
 
     fun removeOnBidFile(onBidFile: OnBidFile) {
         onBidFiles?.remove(onBidFile)
-        onBidFile.onBidFiles = null
+        onBidFile?.onBidFiles = null
     }
 
     fun addOnBidDay(onBidDay: OnBidDays) {
@@ -392,12 +399,24 @@ data class OnBid(
     }
 
     fun addMemo(memo: Memos) {
-        onMemo.add(memo)
-        memo.onMemo = this
+        onMemo?.add(memo)
+        memo?.onMemo = this
     }
 
     fun removeMemo(memo: Memos) {
-        onMemo.remove(memo)
-        memo.onMemo = null
+        onMemo?.remove(memo)
+        memo?.onMemo = null
+    }
+}
+
+class OnBidListener {
+    @PreUpdate
+    fun preUpdate(onBid: OnBid) {
+        println("OnBid가 업데이트 되었습니다: $onBid")
+    }
+
+    @PostUpdate
+    fun postUpdate(onBid: OnBid) {
+        println("OnBid 업데이트 후: $onBid")
     }
 }

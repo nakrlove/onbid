@@ -1,5 +1,6 @@
 package com.smtech.onbid.data.entity
 
+import com.fasterxml.jackson.annotation.JsonBackReference
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
@@ -25,7 +26,11 @@ data class Memos(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "BIDIDX")
-//    @JsonBackReference
-    @JsonIgnore
+    @JsonBackReference
+//    @JsonIgnore
     var onMemo: OnBid? = null
-)
+){
+    override fun toString(): String {
+        return "Memos(idx=$idx, memo_contents=$memo_contents, regdate=$regdate)"
+    }
+}

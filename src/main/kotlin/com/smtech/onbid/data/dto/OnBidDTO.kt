@@ -6,7 +6,7 @@ data class OnBidDTO(
 //        @field:Size(min = 1, message = "주소는 최소 1자 이상이어야 합니다.")
         var bididx: Int?
       , var addr1: String?
-      , var detailAddress:String?    /* 상세 주소 */
+      , var addr2:String?    /* 상세 주소 */
       , var rd_addr: String? /* 도로명 주소 */
 
 //       @field:NotNull(message = "데이터가 누락되었습니다.")
@@ -16,10 +16,10 @@ data class OnBidDTO(
 //      , @field:NotNull
        , var bruptcy_admin_name: String?  /* 파산관제인명 */
 
-      , var note: String? /* 유의사항 주소 */
-      , var memo: String? /* 메모 주소 */
-      , var renter:String? /* 임차여부 */
-      , var ld_area: String? /* 토지 */
+      , var note: String?           /* 유의사항 주소 */
+      , var memo: List<MemoDTO>?    /* 메모 주소 */
+      , var renter:String?          /* 임차여부 */
+      , var ld_area: String?        /* 토지 */
       , var ld_area_memo: String?   /* 토지면적 메모*/
       , var build_area: String? /* 건축물 */
       , var build_area_memo: String? /* 건축물 메모*/
@@ -33,6 +33,7 @@ data class OnBidDTO(
       , val other_laws     : String?
       , val enforcement_decree: String?
       , val idx: Int? /* 관심종목 */
+
       , var page: Int = 0
       , var size: Int = 10
 )

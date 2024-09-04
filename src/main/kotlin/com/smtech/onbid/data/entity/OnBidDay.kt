@@ -1,5 +1,6 @@
 package com.smtech.onbid.data.entity
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.smtech.onbid.data.dto.OnBidDayDTO
 import jakarta.persistence.*
 import java.time.LocalDateTime
@@ -119,7 +120,9 @@ class OnBidDay(@Id
 //                    var sdate: String = LocalDateTime.now().toString(),
 
                     @Column(name = "EDATE")
-                    var edate: String = LocalDateTime.now().toString(),
+//                    @JsonFormat(pattern = "yyyy-MM-dd") // 원하는 형식으로 변경
+                    var edate: String?,
+//                    var edate: String = LocalDateTime.now().toString(),
 
                     @Column(name = "EVALUE")
                     var evalue: String?,
@@ -133,9 +136,11 @@ class OnBidDay(@Id
                     @Column(name = "BIDIDX")
                     var bididx: Int?,
 
-                    @Column(name = "REGDATE")
-                     var regdate: String? = null,
+//                    @Column(name = "REGDATE")
+//                    @JsonFormat(pattern = "yyyy-MM-dd") // 원하는 형식으로 변경
 //                     var regdate: LocalDateTime? = null,
+                   @Column(name = "REGDATE", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+                   var regdate: LocalDateTime? = LocalDateTime.now(),
 ){
 //    constructor() : this(daysidx = null, sdate = LocalDateTime.now().toString(), edate = LocalDateTime.now().toString(), null, null,null,null)
     constructor() : this(null,  LocalDateTime.now().toString(), null, null, null, null)

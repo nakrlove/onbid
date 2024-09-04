@@ -34,6 +34,8 @@ class MemoServiceImpl(@Autowired val memoDAO: MemoDAO,private val onBidRepositor
      * 메모 수정
      */
     override fun statusUpdate(memo: MemoDTO): Memos? {
+//        val onBid = onBidRepository.findById(memo.bididx)
+//            .orElseThrow { IllegalArgumentException("Invalid bididx: ${memo.bididx}") }
         val param  = Memos(memo.idx, memo_contents = memo.memo_contents)
         return memoDAO.statusUpdate(param)
     }

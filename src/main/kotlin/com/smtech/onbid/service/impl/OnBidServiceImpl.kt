@@ -8,21 +8,22 @@ import com.smtech.onbid.data.entity.*
 import com.smtech.onbid.data.repository.OnBidRepository
 import com.smtech.onbid.data.entity.wapper.BidWrapper
 import com.smtech.onbid.data.repository.OnBidDaysRepository
-import com.smtech.onbid.handler.OnBidDataHandler
 import com.smtech.onbid.service.OnBidService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import java.io.ByteArrayInputStream
 import java.io.File
 import java.time.LocalDateTime
+import java.util.Optional
 
 @Service
-class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDAO ,@Autowired val onbidRepository: OnBidRepository,@Autowired val onBidDaysRepository: OnBidDaysRepository): OnBidService{
+class OnBidServiceImpl(@Autowired val onBidDao: OnBidDAO, @Autowired val onbidRepository: OnBidRepository, @Autowired val onBidDaysRepository: OnBidDaysRepository): OnBidService{
 
 
     override fun findDetail( onBid: OnBidDTO ):OnBidMapDTO? {
-        return onBidHandler.findDetail(OnBid(bididx = onBid.bididx))
+        return onBidDao.findDetail(OnBid(bididx = onBid.bididx))
     }
 
     override fun findDaysQuery(bididx: Int): List<OnBidDayDTO> {
@@ -32,14 +33,14 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDAO ,@Autowired val onb
     override fun findAll(onBid: OnBidDTO, page: PageRequest): BidWrapper {
 
         val data = OnBid( addr1 = onBid.addr1
-            , addr2 = onBid.detailAddress
+            , addr2 = onBid.addr2
             , rd_addr = onBid.rd_addr
             , bruptcy_admin_name = onBid.bruptcy_admin_name
             , bruptcy_admin_phone = onBid.bruptcy_admin_phone
         )
 
         val count = onbidRepository.count()
-        val resultList =  onBidHandler.findAlls(page)
+        val resultList =  onBidDao.findAlls(page)
 
 
         println("(@) ====== findAll =count [${count}]")
@@ -47,11 +48,11 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDAO ,@Autowired val onb
     }
 
     override fun findOnBidLists(searchTerm: Int?, limit: Int, offset: Int): List<OnBidMapDTO> {
-        return onBidHandler.findOnBidLists(searchTerm,limit,offset)
+        return onBidDao.findOnBidLists(searchTerm,limit,offset)
     }
 
     override fun findOnBidCount(searchTerm: Int?): Long {
-        return onBidHandler.findOnBidCount(searchTerm)
+        return onBidDao.findOnBidCount(searchTerm)
     }
 
 
@@ -97,7 +98,8 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDAO ,@Autowired val onb
                            , options: List<String>?
                            , additionalFiles: List<MultipartFile>?
                            , onbidDays: List<OnBidDayDTO>?): OnBid {
-        println(" saveOnBid =============== 1")
+        println("national_land_planning_use_laws[${onBidDTO.national_land_planning_use_laws}]" )
+
 
         /**
          * 기본정보 Entity
@@ -111,8 +113,9 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDAO ,@Autowired val onb
          *       , val estateType:String?  /* 부동산종류 */
          *       , val disposal:String?
          */
-        val onbid  = OnBid( addr1 = onBidDTO.addr1
-            , addr2 = onBidDTO.detailAddress
+        val onbid  = OnBid( bididx = onBidDTO.bididx
+            , addr1 = onBidDTO.addr1
+            , addr2 = onBidDTO.addr2
             , rd_addr = onBidDTO.rd_addr
             , bruptcy_admin_name = onBidDTO.bruptcy_admin_name
             , bruptcy_admin_phone = onBidDTO.bruptcy_admin_phone
@@ -134,7 +137,6 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDAO ,@Autowired val onb
             , idx = onBidDTO.idx  //관심종목
         )
 
-
         /**
          * 입찰일자 / 감정가/보증금 등록
          */
@@ -151,7 +153,6 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDAO ,@Autowired val onb
             }
 
             if (onbidDate != null) {
-//                onbid.onBidDays?.add(onbidDate)
                 onbid.addOnBidDay(onbidDate)
             }
         }
@@ -173,7 +174,6 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDAO ,@Autowired val onb
             }
 
             if (onBidFile != null) {
-//                onbid.onBidFiles?.add(onBidFile)
                 onbid.addOnBidFiles(onBidFile)
             }
         }
@@ -182,15 +182,23 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDAO ,@Autowired val onb
         /**
          * 메모 등록
          */
-
         if (onBidDTO.memo.isNullOrEmpty().not()) {
-            onbid.addMemo(Memos(memo_contents = onBidDTO.memo, onMemo = onbid))
+            onBidDTO.memo?.let { list ->
+                list.forEachIndexed { index, mdata ->
+                    val memodata = mdata.let{
+                        Memos(memo_contents = mdata.memo_contents, onMemo = onbid)
+                    }
+
+                    if(memodata != null) {
+                        onbid.addMemo(memodata)
+                    }
+                }
+            }
+
         }
        //================================================//
-
         /* 기본정보 저장 */
-//        return onBidHandler.saveOnBidEntity(onbid)
-        return onBidHandler.saveOnBid(onbid)
+        return onBidDao.saveOnBid(onbid)
     }
 
     override fun saveOnBid(onBidDTO: OnBidDTO, file: File?, additionalFiles: List<File>?): OnBid {
@@ -198,9 +206,9 @@ class OnBidServiceImpl(@Autowired val onBidHandler: OnBidDAO ,@Autowired val onb
         //onBid.regdate = LocalDateTime.now() // Set the current date/time
         val onbid  = OnBid(
             addr1 = onBidDTO.addr1,
-            addr2 = onBidDTO.detailAddress, bruptcy_admin_name = onBidDTO.bruptcy_admin_name, bruptcy_admin_phone = onBidDTO.bruptcy_admin_phone)
+            addr2 = onBidDTO.addr2, bruptcy_admin_name = onBidDTO.bruptcy_admin_name, bruptcy_admin_phone = onBidDTO.bruptcy_admin_phone)
 //        return onBidHandler.saveOnBidEntity(onbid)
-        return onBidHandler.saveOnBid(onbid)
+        return onBidDao.saveOnBid(onbid)
     }
 }
 

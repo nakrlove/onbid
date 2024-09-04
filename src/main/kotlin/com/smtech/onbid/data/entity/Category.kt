@@ -1,5 +1,6 @@
 package com.smtech.onbid.data.entity
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
@@ -17,6 +18,7 @@ data class Category(@Id
 
 //                    @Column(name = "REGDATE", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
                     @Column(name = "REGDATE")
+                    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") // 원하는 형식으로 변경
                     var regdate: String?,
 
                     @Column(name = "BIDIDX")

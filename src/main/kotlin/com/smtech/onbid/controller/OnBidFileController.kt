@@ -2,15 +2,18 @@ package com.smtech.onbid.controller
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-
+import com.smtech.onbid.data.entity.OnBidFile
 import com.smtech.onbid.service.OnBidFileService
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.http.HttpHeaders
 import org.springframework.web.bind.annotation.*
 import java.net.URLEncoder
+import java.util.*
+import kotlin.collections.HashMap
+
 
 data class BidRequest(val bididx: Int,val modify:Boolean)
 
@@ -37,6 +40,20 @@ class OnBidFileController( @Autowired val onfile: OnBidFileService) {
         return ResponseEntity(HttpStatus.OK)
     }
 
+
+    /**
+     * 파일을 Base64로 인코딩하여 전달하기
+     * 서버 측에서 파일을 Base64로 인코딩하여 JSON 형태로 클라이언트에 전달할 수 있습니다.
+     */
+    @GetMapping("/file/{id}")
+    fun getFile(@PathVariable id: Int): Map<String, String?> {
+
+        val entity:OnBidFile  = onfile.getFileById(id).get()
+        val base64File = Base64.getEncoder().encodeToString(entity.file)
+
+        return mapOf( "file" to base64File , "filename" to entity.fileName, "filetype" to entity.fileType)
+
+    }
 
 
     /** 저장된 파일 카테고리 목록조회 */

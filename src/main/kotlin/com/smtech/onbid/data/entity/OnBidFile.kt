@@ -59,6 +59,7 @@ import jakarta.persistence.*
 )
 @Entity
 @Table(name = "onbidfiles_tb")
+@EntityListeners(OnBidFilesListener::class)
 data class OnBidFile (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,18 +70,22 @@ data class OnBidFile (
     val code: String?,
 
     @Column(name = "FILENAME")
-    val fileName: String?,
+    var fileName: String?,
 
     @Column(name = "FILETYPE")
-    val fileType: String?,
+    var fileType: String?,
 
     @Column(name = "FILESIZE")
-    val fileSize: Long?,
+    var fileSize: Long?,
 
+//    @Version
+//    @Column(name = "VERSION")
+//    val version: Long? = null,
 
     @Lob
     @Column(name = "FILE")
-    val file: ByteArray?,
+    var file: ByteArray?,
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "BIDIDX")
@@ -89,4 +94,16 @@ data class OnBidFile (
     var onBidFiles: OnBid? = null
 ){
     constructor() : this(null, code = "", fileName = "", null, null,null)
+}
+
+class OnBidFilesListener {
+    @PreUpdate
+    fun beforeUpdate(onBidFile: OnBidFile) {
+        println("OnBidDays가 업데이트 되기 전: $onBidFile")
+    }
+
+    @PostUpdate
+    fun afterUpdate(onBidFile: OnBidFile) {
+        println("OnBidDays가 업데이트 된 후: $onBidFile")
+    }
 }

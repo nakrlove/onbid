@@ -117,7 +117,7 @@ class OnBidController(@Autowired val onbidService: OnBidService, @Autowired val 
             onbidDays.forEachIndexed { index, file ->
                 val option = onbidDays[index]
                 // 파일과 옵션을 함께 저장하는 로직
-                println(" onbidDays:  , edate=${option.edate} ,evalue=${option.evalue}")
+                println(" onbidDays:  , edate=${option.edate} ,evalue=${option.evalue}, 보증금=${option.deposit}")
             }
         }
 
@@ -130,10 +130,10 @@ class OnBidController(@Autowired val onbidService: OnBidService, @Autowired val 
      * BLOB 컬럼에 파일저장
      */
     @PostMapping("/onModfiyBid", consumes = ["multipart/form-data"])
-    fun onModfiyBid( @Valid @RequestPart onbidDTO: OnBidDTO
-                     , @RequestParam("additionalFiles") additionalFiles: List<MultipartFile>?/* 파일첨부 */
-                     , @RequestParam("additionalFileOptions") options: List<String>?
-                     , @RequestPart("onbidDays") onbidDaysJson: String /* 입찰일자\감정가\보증금 */
+    fun onModfiyBid(   @Valid @RequestPart onbidDTO: OnBidDTO
+                     , @RequestParam(value = "additionalFiles" , required = false) additionalFiles: List<MultipartFile>?/* 파일첨부 */
+                     , @RequestParam(value = "additionalFileOptions", required = false) options: List<String>?
+                     , @RequestPart(value = "onbidDays", required = false) onbidDaysJson: String /* 입찰일자\감정가\보증금 */
     ): ResponseEntity<out Any>{
         println("================onbidL=============")
 

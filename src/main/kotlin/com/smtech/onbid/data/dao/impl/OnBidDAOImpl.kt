@@ -37,39 +37,42 @@ class OnBidDAOImpl(@Autowired val onbidDRepository: OnBidRepository,private val 
                 val modifyBid = findData.get()
 
                 var isUpdated: Boolean = false
+                if(onBid.onBidFiles.isNullOrEmpty().not()) {
+                    println(" files is not empty ##################")
+                    // 기존 파일과 새 파일을 구분하기 위한 리스트
+                    val existingFiles = modifyBid.onBidFiles?.toMutableList() ?: mutableListOf()
+                    val newFiles = onBid.onBidFiles ?: mutableListOf()
 
-                // 기존 파일과 새 파일을 구분하기 위한 리스트
-                val existingFiles = modifyBid.onBidFiles?.toMutableList() ?: mutableListOf()
-                val newFiles = onBid.onBidFiles ?: mutableListOf()
+                    // 삭제 처리
+                    val filesToRemove = existingFiles.filterNot { existingFile ->
+                        newFiles.any { newFile -> existingFile.idx == newFile.idx }
+                    }
+                    filesToRemove.forEach { fileToRemove ->
+                        modifyBid.onBidFiles?.remove(fileToRemove)
+                        onbidFileRepository.delete(fileToRemove) // 데이터베이스에서 파일 삭제
+                    }
 
-                // 삭제 처리
-                val filesToRemove = existingFiles.filterNot { existingFile ->
-                    newFiles.any { newFile -> existingFile.idx == newFile.idx }
-                }
-                filesToRemove.forEach { fileToRemove ->
-                    modifyBid.onBidFiles?.remove(fileToRemove)
-                    onbidFileRepository.delete(fileToRemove) // 데이터베이스에서 파일 삭제
-                }
+                    // 수정 및 추가 처리
+                    newFiles.forEach { newFile ->
+                        val existingFile = existingFiles.find { it.idx == newFile.idx }
+                        if (existingFile != null) {
+                            // 파일 내용이 변경된 경우에만 업데이트
+                            if (existingFile.file != newFile.file ||
+                                existingFile.fileName != newFile.fileName ||
+                                existingFile.fileSize != newFile.fileSize ||
+                                existingFile.fileType != newFile.fileType
+                            ) {
 
-                // 수정 및 추가 처리
-                newFiles.forEach { newFile ->
-                    val existingFile = existingFiles.find { it.idx == newFile.idx }
-                    if (existingFile != null) {
-                        // 파일 내용이 변경된 경우에만 업데이트
-                        if (existingFile.file != newFile.file ||
-                            existingFile.fileName != newFile.fileName ||
-                            existingFile.fileSize != newFile.fileSize ||
-                            existingFile.fileType != newFile.fileType) {
-
-                            existingFile.file = newFile.file
-                            existingFile.fileName = newFile.fileName
-                            existingFile.fileSize = newFile.fileSize
-                            existingFile.fileType = newFile.fileType
+                                existingFile.file = newFile.file
+                                existingFile.fileName = newFile.fileName
+                                existingFile.fileSize = newFile.fileSize
+                                existingFile.fileType = newFile.fileType
+                            }
+                        } else {
+                            // 새 파일 추가
+                            newFile.onBidFiles = modifyBid
+                            modifyBid.onBidFiles?.add(newFile)
                         }
-                    } else {
-                        // 새 파일 추가
-                        newFile.onBidFiles = modifyBid
-                        modifyBid.onBidFiles?.add(newFile)
                     }
                 }
 

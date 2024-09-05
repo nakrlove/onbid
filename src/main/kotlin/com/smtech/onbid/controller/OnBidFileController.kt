@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.net.URLEncoder
@@ -45,16 +46,28 @@ class OnBidFileController( @Autowired val onfile: OnBidFileService) {
      * 파일을 Base64로 인코딩하여 전달하기
      * 서버 측에서 파일을 Base64로 인코딩하여 JSON 형태로 클라이언트에 전달할 수 있습니다.
      */
-    @GetMapping("/file/{id}")
-    fun getFile(@PathVariable id: Int): Map<String, String?> {
+//    @GetMapping("/file/{id}")
+//    fun getFile(@PathVariable id: Int): Map<String, String?> {
+//
+//        val entity:OnBidFile  = onfile.getFileById(id).get()
+//        val base64File = Base64.getEncoder().encodeToString(entity.file)
+//
+//        return mapOf( "file" to base64File , "filename" to entity.fileName, "filetype" to entity.fileType)
+//
+//    }
 
-        val entity:OnBidFile  = onfile.getFileById(id).get()
-        val base64File = Base64.getEncoder().encodeToString(entity.file)
-
-        return mapOf( "file" to base64File , "filename" to entity.fileName, "filetype" to entity.fileType)
-
+    /**
+     * 수정화면에서 파일을 다운로드호출
+     */
+    @GetMapping("/file/{id}", produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
+    @ResponseBody
+    fun getFile(@PathVariable id: Int, response: HttpServletResponse) {
+        val entity: OnBidFile = onfile.getFileById(id).get()
+        // 파일 데이터를 바이너리로 반환
+        response.contentType = entity.fileType
+        response.setHeader("Content-Disposition", "attachment; filename=\"${entity.fileName}\"")
+        response.outputStream.write(entity.file)
     }
-
 
     /** 저장된 파일 카테고리 목록조회 */
     @RequestMapping(value=["/category"])

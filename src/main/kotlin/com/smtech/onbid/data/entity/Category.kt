@@ -26,5 +26,5 @@ data class Category(@Id
     ){
     // 기본 생성자
     constructor() : this(idx =null, content = null, user = null, regdate = LocalDateTime.now().toString(),bididx = null)
-    constructor(content: String?, user: String?) : this(idx =null, content = null, user = null, regdate = LocalDateTime.now().toString(),bididx = null)
+    constructor(content: String?, user: String?) : this(idx =null, content = content, user = user, regdate = LocalDateTime.now().toString(),bididx = null)
 }

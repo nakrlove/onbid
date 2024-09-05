@@ -91,7 +91,13 @@ import java.time.LocalDateTime
                                     ELSE LEAST(edate_diff, edate_diff)
                                     END
                     ) AS rn ,
-                    c.name as status ,
+                     CASE
+                        WHEN d.onbid_status = '039' THEN '039'
+                        WHEN d.onbid_status = '040' THEN '040'
+                        WHEN d.onbid_status NOT IN ('039', '040') AND ABS(DATEDIFF(CURDATE(), d.edate)) < 0 THEN '041'
+                        ELSE '038'
+                    END AS status,
+                   -- c.name as status ,
                     b.national_land_planning_use_laws ,
                     b.other_laws ,
                     b.enforcement_decree ,
@@ -167,7 +173,7 @@ import java.time.LocalDateTime
             f.evalue,
             f.deposit,
             f.onbid_status,
-            f.status,
+            g.name as status,
             c.name AS land_classification_name ,
             f.national_land_planning_use_laws ,
             f.other_laws ,
@@ -177,6 +183,7 @@ import java.time.LocalDateTime
          FROM final_selection f
          LEFT JOIN code_tb c ON c.code COLLATE utf8mb4_unicode_ci = f.land_classification COLLATE utf8mb4_unicode_ci
          LEFT JOIN code_tb d ON d.code COLLATE utf8mb4_unicode_ci = f.estatetype COLLATE utf8mb4_unicode_ci
+         LEFT JOIN code_tb g ON g.code COLLATE utf8mb4_unicode_ci = f.status COLLATE utf8mb4_unicode_ci
         WHERE (:searchTerm = 0 OR f.idx = :searchTerm )
         ORDER BY f.bididx DESC
         LIMIT :limit , :offset
@@ -205,8 +212,8 @@ import java.time.LocalDateTime
     name = "countOnBidWithDetails",/* 전체카운터 */
     query = """
         SELECT COUNT(*)
-        FROM onbid_tb b
-        WHERE (:searchTerm = 0 OR b.idx = :searchTerm )
+          FROM onbid_tb b
+         WHERE (:searchTerm = 0 OR b.idx = :searchTerm )
     """
 )
 @NamedNativeQuery(

@@ -48,6 +48,7 @@ import java.time.LocalDateTime
                 ColumnResult(name = "enforcement_decree"),
                 ColumnResult(name = "idx"),
                 ColumnResult(name = "debtor"),
+                ColumnResult(name = "pnu"),
             ]
         )
     ]
@@ -102,7 +103,8 @@ import java.time.LocalDateTime
                     b.other_laws ,
                     b.enforcement_decree ,
                     b.idx ,
-                    b.debtor
+                    b.debtor,
+                    b.pnu
                 FROM onbid_tb b
                 INNER JOIN onbiddays_tb d ON b.bididx = d.bididx
                 LEFT OUTER JOIN code_tb c ON c.code = d.onbid_status
@@ -144,7 +146,8 @@ import java.time.LocalDateTime
                 other_laws ,
                 enforcement_decree ,
                 idx ,
-                debtor
+                debtor,
+                pnu
             FROM filtered_status
             WHERE rn = 1
         )
@@ -179,7 +182,8 @@ import java.time.LocalDateTime
             f.other_laws ,
             f.enforcement_decree ,
             f.idx ,
-            f.debtor
+            f.debtor,
+            f.pnu
          FROM final_selection f
          LEFT JOIN code_tb c ON c.code COLLATE utf8mb4_unicode_ci = f.land_classification COLLATE utf8mb4_unicode_ci
          LEFT JOIN code_tb d ON d.code COLLATE utf8mb4_unicode_ci = f.estatetype COLLATE utf8mb4_unicode_ci
@@ -247,7 +251,8 @@ import java.time.LocalDateTime
                     b.other_laws ,
                     b.enforcement_decree ,
                     b.idx ,
-                    b.debtor
+                    b.debtor ,
+                    b.pnu
             FROM onbid_tb b
           )
           select 
@@ -282,7 +287,8 @@ import java.time.LocalDateTime
                 d.other_laws,
                 d.enforcement_decree ,
                 d.idx ,
-                d.debtor
+                d.debtor,
+                d.pnu
             from onbid_detail d
             left outer join code_tb e ON e.code COLLATE utf8mb4_unicode_ci = d.onbid_status COLLATE utf8mb4_unicode_ci
             where d.bididx = :bididx
@@ -366,6 +372,8 @@ data class OnBid(
 
     @Column(name = "IDX", columnDefinition = "INT")
     var idx: Int? = null,                                   /* 관심종목 */
+    @Column(name = "PNU", columnDefinition = "VARCHAR")
+    var pnu: String? = null,                                /* 필지번호 */
 
     @OneToMany(mappedBy = "onMemo", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
 //    @JsonIgnore

@@ -33,7 +33,7 @@ data class OnBidDTO(
       , val other_laws     : String?
       , val enforcement_decree: String?
       , val idx: Int? /* 관심종목 */
-
+      , val pnu: String? /* 필지번호 */
       , var page: Int = 0
       , var size: Int = 10
 )

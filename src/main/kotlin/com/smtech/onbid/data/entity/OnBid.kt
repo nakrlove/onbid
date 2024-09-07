@@ -86,28 +86,34 @@ import java.time.LocalDateTime
                         ABS(DATEDIFF(CURDATE(), d.edate)) AS edate_diff,
                         ROW_NUMBER() OVER (
                             PARTITION BY b.bididx
-                                    ORDER BY
-                                    CASE
-                                    WHEN d.onbid_status IN ('039', '040') THEN 0
-                                    ELSE LEAST(edate_diff, edate_diff)
-                                    END
-                    ) AS rn ,
-                     CASE
-                        WHEN d.onbid_status = '039' THEN '039'
-                        WHEN d.onbid_status = '040' THEN '040'
-                        WHEN d.onbid_status NOT IN ('039', '040') AND ABS(DATEDIFF(CURDATE(), d.edate)) < 0 THEN '041'
-                        ELSE '038'
-                    END AS status,
-                   -- c.name as status ,
-                    b.national_land_planning_use_laws ,
-                    b.other_laws ,
-                    b.enforcement_decree ,
-                    b.idx ,
-                    b.debtor,
-                    b.pnu
+                            ORDER BY 
+                                CASE 
+                                    -- 입찰중(038)을 우선순위로, 그다음 유찰(041), 취소(040), 낙찰(039) 순으로 처리
+                                    WHEN d.onbid_status  IN ('038','001') THEN 1
+                                    WHEN d.onbid_status = '041' THEN 2
+                                    WHEN d.onbid_status = '040' THEN 3
+                                    WHEN d.onbid_status = '039' THEN 4
+                                    ELSE 5
+                                END,
+                                 d.edate ASC -- 같은 상태라면 가까운 edate를 우선
+                        ) AS rn,
+                        CASE
+                            WHEN d.edate < CURDATE() AND d.onbid_status = '039' THEN '낙찰'
+                            WHEN d.edate < CURDATE() AND d.onbid_status = '040' THEN '취소'
+                            WHEN d.edate < CURDATE() AND d.onbid_status = '041' THEN '유찰'
+                            ELSE '입찰중'
+                        END AS status,
+                     -- c.name as status ,
+                        b.national_land_planning_use_laws ,
+                        b.other_laws ,
+                        b.enforcement_decree ,
+                        b.idx ,
+                        b.debtor,
+                        b.pnu
                 FROM onbid_tb b
-                INNER JOIN onbiddays_tb d ON b.bididx = d.bididx
+               INNER JOIN onbiddays_tb d ON b.bididx = d.bididx
                 LEFT OUTER JOIN code_tb c ON c.code = d.onbid_status
+
         ),
         filtered_status AS (
                 SELECT *

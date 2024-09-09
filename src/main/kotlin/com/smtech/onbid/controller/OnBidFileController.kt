@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.*
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-import java.util.*
-import kotlin.collections.HashMap
 
 
 data class BidRequest(val bididx: Int,val modify:Boolean)

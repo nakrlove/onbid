@@ -7,6 +7,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -80,7 +81,10 @@ class CodeDAOImpl(@Autowired val attachCodeRepository: CodeRepository): CodeDAO 
             attachCodeRepository.findAll(page)
         } else {
             LOGGER.value.debug(" =========== (2) findListsEntity ============")
-            attachCodeRepository.findByNameContaining(attach.name!!, page)
+            val resultData:Page<Codes> = attachCodeRepository.findByNameContaining(attach.name!!,page)
+//            val count = attachCodeRepository.findNameCountQuery(attach.name!!)
+//            PageImpl(resultData,page,count)
+            resultData
         }
 
     }

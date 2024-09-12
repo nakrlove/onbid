@@ -34,4 +34,5 @@ data class OnBidMapDTO(
     val enforcement_decree: String?,
     val idx: Int?,
     val debtor: String?,
+    val pnu:String?, //필지번호
 )

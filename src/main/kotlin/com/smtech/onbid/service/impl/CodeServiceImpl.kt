@@ -7,6 +7,7 @@ import com.smtech.onbid.data.entity.wapper.CodeWrapper
 import com.smtech.onbid.handler.CodeDataHandler
 import com.smtech.onbid.service.CodeService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
@@ -57,11 +58,13 @@ class CodeServiceImpl @Autowired constructor( val codeDataHandler: CodeDataHandl
         return attachCodeRepository.findByScode(subcode)
     }
 
-    override fun findListsEntity(attach: CodeDTO, page: PageRequest): CodeWrapper {
+//    override fun findListsEntity(attach: CodeDTO, page: PageRequest): CodeWrapper {
+    override fun findListsEntity(attach: CodeDTO, page: PageRequest): Page<Codes> {
         val data = Codes(name = attach.codename )
-        val count = attachCodeRepository.count()
+//        val count = attachCodeRepository.count()
         println("(@) ====== findListsEntity ====== (@)")
         val resultList =  codeDataHandler.findListsEntity(data,page)
-        return CodeWrapper(count,resultList)
+        return resultList
+//        return CodeWrapper(count,resultList)
     }
 }

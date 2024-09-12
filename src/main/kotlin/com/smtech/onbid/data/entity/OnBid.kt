@@ -48,6 +48,7 @@ import java.time.LocalDateTime
                 ColumnResult(name = "enforcement_decree"),
                 ColumnResult(name = "idx"),
                 ColumnResult(name = "debtor"),
+                ColumnResult(name = "pnu"),
             ]
         )
     ]
@@ -85,21 +86,34 @@ import java.time.LocalDateTime
                         ABS(DATEDIFF(CURDATE(), d.edate)) AS edate_diff,
                         ROW_NUMBER() OVER (
                             PARTITION BY b.bididx
-                                    ORDER BY
-                                    CASE
-                                    WHEN d.onbid_status IN ('039', '040') THEN 0
-                                    ELSE LEAST(edate_diff, edate_diff)
-                                    END
-                    ) AS rn ,
-                    c.name as status ,
-                    b.national_land_planning_use_laws ,
-                    b.other_laws ,
-                    b.enforcement_decree ,
-                    b.idx ,
-                    b.debtor
+                            ORDER BY 
+                                CASE 
+                                    -- 입찰중(038)을 우선순위로, 그다음 유찰(041), 취소(040), 낙찰(039) 순으로 처리
+                                    WHEN d.onbid_status  IN ('038','001') THEN 1
+                                    WHEN d.onbid_status = '041' THEN 2
+                                    WHEN d.onbid_status = '040' THEN 3
+                                    WHEN d.onbid_status = '039' THEN 4
+                                    ELSE 5
+                                END,
+                                 d.edate ASC -- 같은 상태라면 가까운 edate를 우선
+                        ) AS rn,
+                        CASE
+                            WHEN d.edate < CURDATE() AND d.onbid_status = '039' THEN '낙찰'
+                            WHEN d.edate < CURDATE() AND d.onbid_status = '040' THEN '취소'
+                            WHEN d.edate < CURDATE() AND d.onbid_status = '041' THEN '유찰'
+                            ELSE '입찰중'
+                        END AS status,
+                     -- c.name as status ,
+                        b.national_land_planning_use_laws ,
+                        b.other_laws ,
+                        b.enforcement_decree ,
+                        b.idx ,
+                        b.debtor,
+                        b.pnu
                 FROM onbid_tb b
-                INNER JOIN onbiddays_tb d ON b.bididx = d.bididx
+               INNER JOIN onbiddays_tb d ON b.bididx = d.bididx
                 LEFT OUTER JOIN code_tb c ON c.code = d.onbid_status
+
         ),
         filtered_status AS (
                 SELECT *
@@ -138,7 +152,8 @@ import java.time.LocalDateTime
                 other_laws ,
                 enforcement_decree ,
                 idx ,
-                debtor
+                debtor,
+                pnu
             FROM filtered_status
             WHERE rn = 1
         )
@@ -167,16 +182,19 @@ import java.time.LocalDateTime
             f.evalue,
             f.deposit,
             f.onbid_status,
+          --  g.name as status,
             f.status,
             c.name AS land_classification_name ,
             f.national_land_planning_use_laws ,
             f.other_laws ,
             f.enforcement_decree ,
             f.idx ,
-            f.debtor
+            f.debtor,
+            f.pnu
          FROM final_selection f
          LEFT JOIN code_tb c ON c.code COLLATE utf8mb4_unicode_ci = f.land_classification COLLATE utf8mb4_unicode_ci
          LEFT JOIN code_tb d ON d.code COLLATE utf8mb4_unicode_ci = f.estatetype COLLATE utf8mb4_unicode_ci
+         LEFT JOIN code_tb g ON g.code COLLATE utf8mb4_unicode_ci = f.status COLLATE utf8mb4_unicode_ci
         WHERE (:searchTerm = 0 OR f.idx = :searchTerm )
         ORDER BY f.bididx DESC
         LIMIT :limit , :offset
@@ -205,8 +223,8 @@ import java.time.LocalDateTime
     name = "countOnBidWithDetails",/* 전체카운터 */
     query = """
         SELECT COUNT(*)
-        FROM onbid_tb b
-        WHERE (:searchTerm = 0 OR b.idx = :searchTerm )
+          FROM onbid_tb b
+         WHERE (:searchTerm = 0 OR b.idx = :searchTerm )
     """
 )
 @NamedNativeQuery(
@@ -240,7 +258,8 @@ import java.time.LocalDateTime
                     b.other_laws ,
                     b.enforcement_decree ,
                     b.idx ,
-                    b.debtor
+                    b.debtor ,
+                    b.pnu
             FROM onbid_tb b
           )
           select 
@@ -275,7 +294,8 @@ import java.time.LocalDateTime
                 d.other_laws,
                 d.enforcement_decree ,
                 d.idx ,
-                d.debtor
+                d.debtor,
+                d.pnu
             from onbid_detail d
             left outer join code_tb e ON e.code COLLATE utf8mb4_unicode_ci = d.onbid_status COLLATE utf8mb4_unicode_ci
             where d.bididx = :bididx
@@ -359,6 +379,8 @@ data class OnBid(
 
     @Column(name = "IDX", columnDefinition = "INT")
     var idx: Int? = null,                                   /* 관심종목 */
+    @Column(name = "PNU", columnDefinition = "VARCHAR")
+    var pnu: String? = null,                                /* 필지번호 */
 
     @OneToMany(mappedBy = "onMemo", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
 //    @JsonIgnore

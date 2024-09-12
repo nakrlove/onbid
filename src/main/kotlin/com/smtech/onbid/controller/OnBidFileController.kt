@@ -11,9 +11,9 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
-import java.util.*
-import kotlin.collections.HashMap
+import java.nio.charset.StandardCharsets
 
 
 data class BidRequest(val bididx: Int,val modify:Boolean)
@@ -63,11 +63,21 @@ class OnBidFileController( @Autowired val onfile: OnBidFileService) {
     @ResponseBody
     fun getFile(@PathVariable id: Int, response: HttpServletResponse) {
         val entity: OnBidFile = onfile.getFileById(id).get()
+
         // 파일 데이터를 바이너리로 반환
         response.contentType = entity.fileType
-        response.setHeader("Content-Disposition", "attachment; filename=\"${entity.fileName}\"")
+        try {
+            // 파일 이름을 URL 인코딩하여 특수 문자 처리
+            val encodedFileName = URLEncoder.encode(entity.fileName, StandardCharsets.UTF_8.toString())
+            response.setHeader("Content-Disposition", "attachment; filename=\"${encodedFileName}\"")
+        } catch (e: UnsupportedEncodingException) {
+            // UTF-8 인코딩 지원 오류 처리
+            response.setHeader("Content-Disposition", "attachment; filename=\"${entity.fileName}\"")
+        }
+
         response.outputStream.write(entity.file)
     }
+
 
     /** 저장된 파일 카테고리 목록조회 */
     @RequestMapping(value=["/category"])

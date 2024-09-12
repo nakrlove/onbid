@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.*
+
 
 @Service
 class OnBidDAOImpl(@Autowired val onbidDRepository: OnBidRepository,private val onbidFileRepository: OnBidFileRepository):OnBidDAO {
@@ -150,7 +150,7 @@ class OnBidDAOImpl(@Autowired val onbidDRepository: OnBidRepository,private val 
                 modifyBid.progress_status     = onBid.progress_status
                 modifyBid.regdate             = onBid.regdate
                 modifyBid.renter              = onBid.renter
-
+                modifyBid.pnu                 = onBid.pnu //필지번호
                 println("insert data ${modifyBid}")
                 onbidDRepository.save(modifyBid)
             } else {

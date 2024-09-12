@@ -11,11 +11,13 @@ import org.springframework.data.repository.query.Param
 
 interface CodeRepository: JpaRepository<Codes, Long> {
     /** 코드명 검색 */
-    fun findByNameContaining(codename: String, pageable: Pageable): Page<Codes>
-
+//    @Query("SELECT c.idx,c.code,c.scode,c.name FROM Codes c WHERE c.name like :name%")
+    fun findByNameContaining(name: String, pageable: Pageable): Page<Codes>
     /** SUB_CODE로 조회*/
     fun findByScode(subcode: String): List<Codes>
 
+    @Query("SELECT COUNT(c) FROM Codes c WHERE c.name like :name%")
+    fun findNameCountQuery(name: String):Long
 
     /** 파일첨부 */
     @Query("""

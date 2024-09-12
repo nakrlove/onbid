@@ -12,7 +12,7 @@ interface CodeService {
     fun deleteCode(attach: CodeDTO): Codes
     fun findCode(attach: CodeDTO): Codes
     fun findCodeQuery(): List<Codes>
-    fun findCodeQuery(codes: String): List<Codes>
+    fun findCodeQuery(codes: List<String>?): List<Codes>
     fun findMastCode(subcode: String): List<Codes>
 //    fun findListsEntity(attach: CodeDTO, page: PageRequest): CodeWrapper
     fun findListsEntity(attach: CodeDTO, page: PageRequest): Page<Codes>

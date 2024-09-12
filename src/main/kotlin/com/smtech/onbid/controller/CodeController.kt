@@ -77,7 +77,7 @@ class CodeController(@Autowired val codeservice: CodeService) {
    * 파일첨부 구분코드
    */
     @PostMapping("/file-code")
-    fun onFileCodeList(@RequestParam("codes") codes: String?): ResponseEntity<out Any> {
+    fun onFileCodeList(@RequestParam("codes") codes: List<String>?): ResponseEntity<out Any> {
         var result: List<Codes>? = null
         codes?.let{
             println(" === 1) onFileCodeList ===========")

@@ -45,11 +45,11 @@ interface CodeRepository: JpaRepository<Codes, Long> {
         )
         select ctb.idx,ctb.code,ctb.scode,ctb.name 
         from code_tb ctb inner join duplication d on d.scode <> ctb.code
-        where ctb.scode = :scode
+        where ctb.scode in (:scode)
         group by ctb.idx,ctb.code,ctb.scode,ctb.name
         order by ctb.idx asc
     """, nativeQuery = true)
-    fun findCodeQuery(@Param(value = "scode") scode: String): List<Codes>
+    fun findCodeQuery(@Param(value = "scode") codes: List<String>?): List<Codes>
 
     /** 코드명 검색 */
 //    override fun findAll(pageable: Pageable): Page<Codes>

@@ -3,7 +3,6 @@ package com.smtech.onbid.service.impl
 import com.smtech.onbid.data.dto.CodeDTO
 import com.smtech.onbid.data.repository.CodeRepository
 import com.smtech.onbid.data.entity.Codes
-import com.smtech.onbid.data.entity.wapper.CodeWrapper
 import com.smtech.onbid.handler.CodeDataHandler
 import com.smtech.onbid.service.CodeService
 import org.springframework.beans.factory.annotation.Autowired
@@ -47,7 +46,7 @@ class CodeServiceImpl @Autowired constructor( val codeDataHandler: CodeDataHandl
        return  attachCodeRepository.findCodeQuery()
     }
 
-    override fun findCodeQuery(codes: String): List<Codes> {
+    override fun findCodeQuery(codes: List<String>?): List<Codes> {
         return  attachCodeRepository.findCodeQuery(codes)
     }
 

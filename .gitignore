@@ -42,6 +42,6 @@ out/
 .kotlin
 
 ##### Dev Source ####
-.DS_Store
-gradle/.DS_Store
-src/test/kotlin/com/smtech/onbid/TxtTOCsv.kt
+#.DS_Store
+#gradle/.DS_Store
+#src/test/kotlin/com/smtech/onbid/TxtTOCsv.kt

@@ -20,6 +20,7 @@ repositories {
 }
 
 dependencies {
+
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
 	//jpa
@@ -46,7 +47,7 @@ dependencies {
 	implementation("io.github.microutils:kotlin-logging:1.12.5") // Logging
 	//mysql
 	runtimeOnly 'com.mysql:mysql-connector-j'
-
+	implementation 'mysql:mysql-connector-java:8.0.32' // 최신 버전 확인 필요
 	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
 //	testImplementation 'org.springframework.security:spring-security-test'
 

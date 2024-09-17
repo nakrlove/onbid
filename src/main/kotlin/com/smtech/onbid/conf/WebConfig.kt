@@ -11,7 +11,10 @@ class WebConfig : WebMvcConfigurer {
 
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**")
-            .allowedOrigins("http://localhost:3000")
+            .allowedOrigins(
+                "http://10.211.55.13:3000",   // 첫 번째 React 앱의 주소
+                "http://localhost:3000"       // 로컬 개발 환경
+            )
 //            .allowedMethods("*")
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 //            .allowedHeaders("Content-Type, Authorization")

@@ -13,6 +13,7 @@ class WebConfig : WebMvcConfigurer {
         registry.addMapping("/**")
             .allowedOrigins(
                 "http://10.211.55.13:3000",   // 첫 번째 React 앱의 주소
+                "http://192.168.45.225:3000",   // 첫 번째 React 앱의 주소
                 "http://localhost:3000"       // 로컬 개발 환경
             )
 //            .allowedMethods("*")

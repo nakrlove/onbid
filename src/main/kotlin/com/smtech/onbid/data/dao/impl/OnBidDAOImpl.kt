@@ -151,6 +151,7 @@ class OnBidDAOImpl(@Autowired val onbidDRepository: OnBidRepository,private val 
                 modifyBid.regdate             = onBid.regdate
                 modifyBid.renter              = onBid.renter
                 modifyBid.pnu                 = onBid.pnu //필지번호
+                modifyBid.sale_notice_id      = onBid.sale_notice_id //매각공고번호
                 println("insert data ${modifyBid}")
                 onbidDRepository.save(modifyBid)
             } else {

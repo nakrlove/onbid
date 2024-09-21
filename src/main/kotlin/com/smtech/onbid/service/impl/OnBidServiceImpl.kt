@@ -136,6 +136,7 @@ class OnBidServiceImpl(@Autowired val onBidDao: OnBidDAO, @Autowired val onbidRe
             , enforcement_decree = onBidDTO.enforcement_decree
             , idx = onBidDTO.idx  //관심종목
             , pnu = onBidDTO.pnu  //필지번호
+            , sale_notice_id = onBidDTO.sale_notice_id  //매각공고번호
         )
 
         /**

@@ -35,4 +35,5 @@ data class OnBidMapDTO(
     val idx: Int?,
     val debtor: String?,
     val pnu:String?, //필지번호
+    val sale_notice_id:String?, //매각공고번호
 )

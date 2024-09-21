@@ -49,6 +49,7 @@ import java.time.LocalDateTime
                 ColumnResult(name = "idx"),
                 ColumnResult(name = "debtor"),
                 ColumnResult(name = "pnu"),
+                ColumnResult(name = "sale_notice_id"),
             ]
         )
     ]
@@ -109,8 +110,8 @@ import java.time.LocalDateTime
                         b.enforcement_decree ,
                         b.idx ,
                         b.debtor,
-                        b.pnu
-                FROM onbid_tb b
+                        b.pnu,
+                        b.sale_notice_id                FROM onbid_tb b
                INNER JOIN onbiddays_tb d ON b.bididx = d.bididx
                 LEFT OUTER JOIN code_tb c ON c.code = d.onbid_status
 
@@ -153,8 +154,8 @@ import java.time.LocalDateTime
                 enforcement_decree ,
                 idx ,
                 debtor,
-                pnu
-            FROM filtered_status
+                pnu ,
+                sale_notice_id            FROM filtered_status
             WHERE rn = 1
         )
          SELECT
@@ -190,8 +191,8 @@ import java.time.LocalDateTime
             f.enforcement_decree ,
             f.idx ,
             f.debtor,
-            f.pnu
-         FROM final_selection f
+            f.pnu ,
+            f.sale_notice_id         FROM final_selection f
          LEFT JOIN code_tb c ON c.code COLLATE utf8mb4_unicode_ci = f.land_classification COLLATE utf8mb4_unicode_ci
          LEFT JOIN code_tb d ON d.code COLLATE utf8mb4_unicode_ci = f.estatetype COLLATE utf8mb4_unicode_ci
          LEFT JOIN code_tb g ON g.code COLLATE utf8mb4_unicode_ci = f.status COLLATE utf8mb4_unicode_ci
@@ -259,8 +260,8 @@ import java.time.LocalDateTime
                     b.enforcement_decree ,
                     b.idx ,
                     b.debtor ,
-                    b.pnu
-            FROM onbid_tb b
+                    b.pnu ,
+                    b.sale_notice_id            FROM onbid_tb b
           )
           select 
                 d.bididx,
@@ -295,8 +296,8 @@ import java.time.LocalDateTime
                 d.enforcement_decree ,
                 d.idx ,
                 d.debtor,
-                d.pnu
-            from onbid_detail d
+                d.pnu ,
+                d.sale_notice_id            from onbid_detail d
             left outer join code_tb e ON e.code COLLATE utf8mb4_unicode_ci = d.onbid_status COLLATE utf8mb4_unicode_ci
             where d.bididx = :bididx
     """,
@@ -381,7 +382,8 @@ data class OnBid(
     var idx: Int? = null,                                   /* 관심종목 */
     @Column(name = "PNU", columnDefinition = "VARCHAR")
     var pnu: String? = null,                                /* 필지번호 */
-
+    @Column(name = "SALE_NOTICE_ID", columnDefinition = "VARCHAR")
+    var sale_notice_id: String? = null,                                /* 매각공고번호 */
     @OneToMany(mappedBy = "onMemo", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
 //    @JsonIgnore
     @JsonManagedReference

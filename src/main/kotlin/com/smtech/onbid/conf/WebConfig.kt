@@ -30,8 +30,7 @@ class WebConfig : WebMvcConfigurer {
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         registry.addResourceHandler("/**")
-//            .addResourceLocations("file:/Users/nakrlove/Desktop/dev/onbidweb/public/")
-            .addResourceLocations("file:/Users/nakrlove/Desktop/dev/onbidweb/build/")
+            .addResourceLocations("file:/User/")
     }
 
     override fun addViewControllers(registry: ViewControllerRegistry) {
